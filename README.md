@@ -6,4 +6,6 @@
 
 3.本地査看效果直接执行compile-local.sh，然后浏览器输入http://localhost:1313/
 
-4.本地查看效果满意后，直接提交Git, 它会自动部署，等部署完毕，浏览器输入https://supersonicbi.github.io即可看到效果
+4.本地查看效果满意后，直接提交Git, 它会自动部署
+
+5. 等部署完毕，浏览器输入https://supersonicbi.github.io即可看到效果(可能有几秒的延时)
