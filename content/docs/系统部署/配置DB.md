@@ -5,6 +5,8 @@ weight = 2
 
 # 配置DB
 
+系统默认使用H2内存数据库, 重启后会丢失数据, 若需要替换为自己的MySQL, 请按以下进行配置:
+
 ## 1. 执行SQL脚本
 
 **初次配置DB**请依次执行conf/db下schema-mysql.sql、 data-mysql.sql, 这两个脚本均为最新表结构
