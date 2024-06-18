@@ -20,7 +20,7 @@ jobs:
                   hugo-version: "latest"
 
             - name: Build Web
-              run: hugo
+              run: hugo --theme=hugo-book --baseURL="https://supersonicbi.github.io/" --buildDrafts
 
             - name: Deploy Web
               uses: peaceiris/actions-gh-pages@v3

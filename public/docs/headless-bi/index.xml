@@ -1,13 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Headless BI on SuperSonic</title><link>http://localhost:1313/docs/headless-bi/</link><description>Recent content in Headless BI on SuperSonic</description><generator>Hugo</generator><language>en-us</language><atom:link href="http://localhost:1313/docs/headless-bi/index.xml" rel="self" type="application/rss+xml"/><item><title>构建模型</title><link>http://localhost:1313/docs/headless-bi/%E6%9E%84%E5%BB%BA%E6%A8%A1%E5%9E%8B/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/headless-bi/%E6%9E%84%E5%BB%BA%E6%A8%A1%E5%9E%8B/</guid><description>构建模型#构建语义模型是使用SuperSonic的第一步。在这个模块中, 它可以连接上你的数据库引擎, 并通过简单方便的方式来帮助你将物理数据建模为维度和指标等逻辑概念。建模完成后, 你就可以在问答中通过自然语言的方式来和你的物理数据交互啦~
-问题示例
-为了帮助你更好地理解建模的过程, 我们通过一个问题示例来进行介绍: SuperSonic本身作为一个产品, 那么如何用语义建模来统计它的埋点访问数据呢？比如SuperSonic在一段时间内的访问用户数是多少？这些用户的访问次数和停留时长是怎样的？这些用户来自哪些部门？这些用户看了哪些页面？分别看了多少次？等我们建模完成, 这些问题的答案也就浮出水面了。
-1. 创建一个数据库链接#在开始探索之前, 你首先需要创建一个数据库链接来连接你的数据库, 以便后续获取数据。在SuperSonic中，主要支持JDBC类型的数据库链接，创建一个数据库连接主要分为 以下三个步骤:
-填写连接信息 点击测试连接, 若连接测试通过, 则可点击保存。否则, 返回步骤1 点击保存。 如图1-1所示, 由于SuperSonic的埋点访问数据被存放在H2数据库中, 因此我们创建了一个H2数据库实例作为例子。除了H2数据库以外, 我们还支持MySQL, ClickHouse, PG等多种常见数据库。
-需要说明的是, 在这里创建数据库之后, 并不是所有人都可以查询这个数据库链接的数据, 需要在图2-1表单上进行授权。
-管理员: 可以编辑这个数据库链接的人
-使用者: 可以使用这个数据库链接查询数据的人
-2. 创建一个主题域和模型集#接下来, 用户可以按自己的业务场景去创建主题域, 然后在主题域下面创建具体的模型集。如图2-1所示, 为了统计SuperSonic的埋点访问情况, 我们创建了一个叫&amp;quot;超音数&amp;quot;的主题域以及基于SuperSonic的埋点数据创建了一个&amp;quot;埋点模型集&amp;quot;:
-3. 创建数据模型#创建好了一个模型集后, 我们就可以把物理数据抽象为一个个数据模型并创建到模型集下。在SuperSonic中, 数据模型是对数据库中数据的一种逻辑层面上的抽象, 它既可以直接指代一张物理表, 也可以由一段SQL逻辑表示而成。数据模型中涉及的字段可被指定为维度或者度量, 而这些维度和度量又可以衍生出更复杂的维度和指标。如图3-1, 超音数提供了两种创建数据模型的方式。
-其中, 快速创建 可以直接指定一张物理表来把它创建为数据模型, 而SQL脚本 则提供了更为灵活的数据模型创建方式, 我们可以通过写一条逻辑SQL来把它指定为数据模型
-如图3-2为通过SQL脚本的方式创建数据模型, 首先需要我们填写一些基本信息, 如数据模型名称和描述。
-然后我们写一条SQL来表达我们的数据模型逻辑, 然后点击运行, 就可以看到这条SQL查询出来的数据, 校验数据无误之后, 我们可以点击生成数据模型, 需要注意的是, 这里创建数据模型选择数据库链接的时候, 需要有数据库的使用者权限.</description></item><item><title>指标管理</title><link>http://localhost:1313/docs/headless-bi/%E6%8C%87%E6%A0%87%E7%AE%A1%E7%90%86/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/headless-bi/%E6%8C%87%E6%A0%87%E7%AE%A1%E7%90%86/</guid><description>指标管理#正在快速完善中</description></item></channel></rss>
