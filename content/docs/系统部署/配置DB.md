@@ -13,6 +13,8 @@ weight = 2
 
 ## 2. 配置YAML文件
 
+application.yaml中默认的DB配置为H2配置, 替换为自己的MySQL即可
+
 ```
 spring:
   datasource:
