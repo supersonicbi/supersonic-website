@@ -8,4 +8,4 @@
 
 4.本地查看效果满意后，直接提交Git, 它会自动部署
 
-5.等部署完毕，浏览器输入https://supersonicbi.github.io即可看到效果(可能有几秒的延时)
+5.等部署完毕，浏览器输入https://supersonicbi.github.io 即可看到效果(可能有几秒的延时)
