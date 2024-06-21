@@ -15,7 +15,7 @@ SuperSonic可以从两个粒度配置LLM：
 
 
 - 助理粒度：在助理管理模块，修改助理配置，填入相应的变量
-{{< figure src=/img/supersonic_quickstart_chat.png#center >}}
+{{< figure src=/img/supersonic_agent_config.png#center >}}
 
 ## Embedding模型
 SuperSonic有三种方式配置Embedding模型（0.9.2版本及之前）：
