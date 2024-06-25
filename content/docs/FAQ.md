@@ -33,6 +33,6 @@ A: 自0.9.2版本起已经支持多轮对话，但默认是关闭的，需要在
 
 A: 系统默认使用H2内存数据库，如果需要持久化存储需配置DB，参考[文档](https://supersonicbi.github.io/docs/%E7%B3%BB%E7%BB%9F%E9%83%A8%E7%BD%B2/%E9%85%8D%E7%BD%AEdb/)
 
-## admin、jack、tom、lucy、alice用户密码
+## admin、jack、tom、lucy、alice用户密码？
 
 A: 系统默认创建的用户密码为：123456
