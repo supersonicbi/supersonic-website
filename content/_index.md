@@ -20,7 +20,7 @@ SuperSonic主张通过两种BI新范式的融合，一方面让数据得到更�
 - Headless BI的Query能力，通过自然语言API获得智能拓展。
 - Chat BI的Text2SQL能力，通过语义数据模型获得RAG增强。
 
-{{< figure src=../img/supersonic_ideas.png  height="80%" width="80%" align="center" >}}
+{{< figure src=../img/supersonic_ideas.png  align="center" >}}
 
 ## 项目社区建设
 
@@ -30,5 +30,4 @@ Playground地址：[http://117.72.46.148:9080](http://117.72.46.148:9080)
 
 微信公众号，不定期更新项目发版计划与通知，进入公众号后可获取用户交流群二维码。
 
-{{< figure src=../img/supersonic_wechat_oa.png height="50%" width="50%" >}}
-
+{{< figure src=../img/supersonic_wechat_oa.png  align="center" >}}
