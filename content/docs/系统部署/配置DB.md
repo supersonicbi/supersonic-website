@@ -26,7 +26,7 @@ conf下application-local.yaml中默认的DB配置为H2配置, 替换为自己的
 ```
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/your_database?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    url: jdbc:mysql://localhost:3306/your_database?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowMultiQueries=true
     username: your_username
     password: your_password
     driver-class-name: com.mysql.jdbc.Driver
