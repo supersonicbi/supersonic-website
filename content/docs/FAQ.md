@@ -43,3 +43,6 @@ A: [连接数据库](https://supersonicbi.github.io/docs/headless-bi/%E8%BF%9E%E
 -> [构造模型(创建指标和维度)](http://localhost:1313/docs/headless-bi/%E6%9E%84%E5%BB%BA%E6%A8%A1%E5%9E%8B/) 
 -> [组装数据集](http://localhost:1313/docs/headless-bi/%E7%BB%84%E8%A3%85%E6%95%B0%E6%8D%AE%E9%9B%86/)
 -> [创建助理和工具](http://localhost:1313/docs/chat-bi/%E9%85%8D%E7%BD%AE%E5%8A%A9%E7%90%86/)
+
+## swagger地址是多少？
+A: http://localhost:9080/swagger-ui/index.html
