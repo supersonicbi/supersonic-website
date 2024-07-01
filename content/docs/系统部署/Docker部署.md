@@ -16,8 +16,7 @@ docker-compose up -d
 `
 SUPERSONIC_VERSION=0.9.2-SNAPSHOT docker-compose up -d
 `
-
-{{< figure src=/img/docker_ps.png.png#center >}}
+{{< figure src=/img/docker_ps.png#center >}}
 
 2. 运维操作  
 查看进程运行状况：
@@ -25,6 +24,6 @@ SUPERSONIC_VERSION=0.9.2-SNAPSHOT docker-compose up -d
 docker-compose ps
 `
 正常会出现三个服务：
-{{< figure src=/img/docker_service.png.png#center >}}
+{{< figure src=/img/docker_service.png#center >}}
 
 3. 访问：http://localhost:9080
