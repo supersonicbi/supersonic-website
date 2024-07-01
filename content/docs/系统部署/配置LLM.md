@@ -10,16 +10,19 @@ weight = 3
 SuperSonic可以从两个粒度配置Chat Model：
 
 ### **1. 系统粒度**
-系统粒度有两种方式配置：  
-#### **1.1.修改supersonic-env.sh方式**
-修改配置文件`conf/supersonic-env.sh`，替换相应的变量
+#### **1.2.修改langchain4j.yaml配置文件方式**
 
-{{< figure src=/img/supersonic_deploy_llm.png#center >}}
+从0.9.4版本开始，langchain4j配置从application.yaml文件中单独抽取，方便用户配置；以langchain4j-local.yaml为例配置：
 
-#### **1.2.修改application-local.yaml方式**
-修改配置文件`conf/application-local.yaml`，替换相应的变量
-{{< figure src=/img/supersonic_llm_config.png#center >}}
-目前支持：open-ai、zhipu、ollama、azure、qianfan、dashscope；通常情况下各模型会兼容open-ai协议，可以统一采用open-ai方式
+{{< figure src=/img/supersonic_langchain4j_config.png#center >}}
+目前支持：open-ai、ollama两种方式；
+1、open_ai 用于连接云端模型；通常情况下各云上模型会兼容open-ai协议
+2、ollama 用于连接本地模型； 
+
+{{< hint info >}}
+**注意**
+推荐使用open_ai、ollama；其他azure、qianfan、dashscope、zhipu方式理论上也支持，但是待验证；
+{{< /hint >}}
 
 open-ai 配置方式：
 ```
@@ -32,10 +35,10 @@ langchain4j:
             temperature: ${OPENAI_TEMPERATURE:0.0}
             timeout: ${OPENAI_TIMEOUT:PT60S}
 ```
-zhipu 配置方式：
+ollama 配置方式：
 ```
 langchain4j:
-    zhipu:
+    ollama:
         chat-model:
             base-url: ${OPENAI_API_BASE:demo}
             api-key: ${OPENAI_API_KEY:demo}
@@ -43,10 +46,14 @@ langchain4j:
             temperature: ${OPENAI_TEMPERATURE:0.0}
             timeout: ${OPENAI_TIMEOUT:PT60S}
 ```
-ollama 配置方式：
+{{< hint info >}}
+**注意**
+以下方式配置，待验证：
+{{< /hint >}}
+zhipu 配置方式：
 ```
 langchain4j:
-    ollama:
+    zhipu:
         chat-model:
             base-url: ${OPENAI_API_BASE:demo}
             api-key: ${OPENAI_API_KEY:demo}
@@ -86,11 +93,18 @@ langchain4j:
             temperature: ${OPENAI_TEMPERATURE:0.0}
             timeout: ${OPENAI_TIMEOUT:PT60S}
 ```
-其他的方式类似
 
 ### **2. 助理粒度**
-在助理管理模块，修改助理配置，填入相应的变量
-{{< figure src=/img/supersonic_agent_config.png#center >}}
+在助理管理模块，修改助理配置，填入相应的变量:
+open-ai 配置方式： 
+
+{{< figure src=/img/supersonic_agent_llm_1.png#center >}}
+
+ollama 配置方式：
+
+
+{{< figure src=/img/supersonic_agent_llm_2.png#center >}}
+
 
 ## Embedding Model
 ### **1. 0.9.2版本及之前**
@@ -114,7 +128,7 @@ rm  /tmp/InMemory.text2dsl_agent_collection
 ### **2. 0.9.2版本之后**
 统一采用一种方式配置Embedding模型，支持in-memory、open-ai、zhipu、ollama、azure、qianfan、dashscope
 
-{{< figure src=/img/supersonic_embedding_model_v2.png#center >}}
+{{< figure src=/img/supersonic_embedding_model_new.png#center >}}
 
 支持in-memory 配置方式：
 目前支持bge-small-zh、all-minilm-l6-v2-q内嵌模型；并支持符合onnx格式的本地模型；
@@ -192,7 +206,7 @@ in-memory 配置方式：
 langchain4j:
     in-memory:
         embedding-store:
-            file-path: /tmp
+            persist-path: /tmp
 ```
 chroma 配置方式：
 ```
@@ -209,7 +223,7 @@ langchain4j:
         embedding-store:
             host: localhost
             port: 2379
-            url: http://0.0.0.0:2379
+            uri: http://0.0.0.0:2379
             token: demo
             dimension: 384
             timeout: 120s   
