@@ -8,17 +8,39 @@ weight = 1
 下载安装Docker和Docker Compose
 
 # 启动部署
-1. 进入docker目录，执行脚步启动
+## 进入docker目录，执行脚步启动
 `
-docker-compose up -d
+    docker-compose up -d
 `
-支持按SuperSonic版本启动：
+{{< hint info >}}
+**注意**
+支持按SuperSonic版本启动，不指定版本默认是：latest  
 `
 SUPERSONIC_VERSION=0.9.2-SNAPSHOT docker-compose up -d
 `
+{{< /hint >}}
+
 {{< figure src=/img/docker_ps.png#center >}}
 
-2. 运维操作  
+
+{{< hint info >}}
+**注意**
+镜像下载慢，可配置国内镜像源，许多国内的云服务提供商提供了Docker镜像加速服务。你可以配置Docker使用这些镜像源来加速下载。
+以阿里云为例：
+1. 登录阿里云控制台，进入容器镜像服务。
+2. 在左侧导航栏中选择“镜像加速器”。
+3. 复制加速器地址，例如 https://<your-accelerator-id>.mirror.aliyuncs.com。
+4. 编辑 Docker 配置文件 /etc/docker/daemon.json，添加以下内容：  
+{
+"registry-mirrors": ["https://<your-accelerator-id>.mirror.aliyuncs.com"]
+}  
+5. 重启 Docker 服务：  
+sudo systemctl daemon-reload  
+sudo systemctl restart docker
+
+{{< /hint >}}
+
+## 运维操作
 查看进程运行状况：
 `
 docker-compose ps
@@ -26,4 +48,6 @@ docker-compose ps
 正常会出现三个服务：
 {{< figure src=/img/docker_service.png#center >}}
 
-3. 访问：http://localhost:9080
+
+## 验证
+待各服务成功启动后，访问链接：http://localhost:9080
