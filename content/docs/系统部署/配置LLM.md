@@ -135,6 +135,13 @@ langchain4j:
             modelPath: /data/model.onnx
             vocabularyPath: /data/onnx_vocab.txt
 ```
+{{< hint info >}}
+**注意**
+如果是启动报错，version `GLIBC_2.27' not found (required by xxxlibonnxruntime.so)，如下图所示：
+原因是本地环境缺少对应库文件可尝试切换open-ai、dashscope等提供的embedding-model
+{{< /hint >}}
+
+{{< figure src=/img/supersonic_inmemory_error.jpg#center >}}
 
 open-ai 配置方式：
 ```
@@ -153,7 +160,7 @@ langchain4j:
         embedding-model:
             base-url: ${OPENAI_API_BASE:demo}
             api-key: ${OPENAI_API_KEY:demo}
-            model-name: xxx
+            model: xxx
 ```
 ollama 配置方式：
 ```
@@ -186,7 +193,7 @@ dashscope 配置方式：
 ```
 langchain4j:
     dashscope:
-        chat-model:
+        embedding-model:
             api-key: ${OPENAI_API_KEY:demo}
             model-name: xxx
 ```
