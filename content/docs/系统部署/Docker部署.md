@@ -4,8 +4,15 @@ weight = 1
 +++
 
 # 部署前提
+下载安装Docker和Docker Compose，并启动docker
 
-下载安装Docker和Docker Compose
+{{< hint info >}}
+**注意**
+如果报如下错:  
+Cannot connect to the Docker daemon at unix:///Users/lexluo/.docker/run/docker.sock. Is the docker daemon running?   
+说明docker没有启动
+{{< /hint >}}
+
 
 # 启动部署
 ## 进入docker目录，执行脚步启动
