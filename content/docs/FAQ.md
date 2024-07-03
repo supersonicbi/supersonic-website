@@ -33,9 +33,9 @@ A: 自0.9.2版本起已经支持多轮对话，但默认是关闭的，需要在
 
 A: 系统默认使用H2内存数据库，如果需要持久化存储需配置DB，参考[文档](https://supersonicbi.github.io/docs/%E7%B3%BB%E7%BB%9F%E9%83%A8%E7%BD%B2/%E9%85%8D%E7%BD%AEdb/)
 
-## admin、jack、tom、lucy、alice用户密码？
+## 系统默认的账号和密码是什么？
 
-A: 系统默认创建的用户密码为：123456
+A: 系统默认创建的用户有admin, jack, tom, lucy, alice，密码都是：123456
 
 ## 如果要用我自己的数据进行测试，我至少需要经过哪些步骤
 
@@ -44,5 +44,5 @@ A: [连接数据库](https://supersonicbi.github.io/docs/headless-bi/%E8%BF%9E%E
 -> [组装数据集](http://supersonicbi.github.io/docs/headless-bi/%E7%BB%84%E8%A3%85%E6%95%B0%E6%8D%AE%E9%9B%86/)
 -> [创建助理和工具](http://supersonicbi.github.io/docs/chat-bi/%E9%85%8D%E7%BD%AE%E5%8A%A9%E7%90%86/)
 
-## swagger地址是多少？
-A: http://localhost:9080/swagger-ui/index.html
+## 是否可以提供接口供第三方应用调用？
+A: 可以，启动系统后查看swagger接口文档：http://localhost:9080/swagger-ui/index.html
