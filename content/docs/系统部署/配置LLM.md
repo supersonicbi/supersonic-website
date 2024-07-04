@@ -46,6 +46,17 @@ langchain4j:
             temperature: ${OPENAI_TEMPERATURE:0.0}
             timeout: ${OPENAI_TIMEOUT:PT60S}
 ```
+azure 配置方式：
+```
+langchain4j:
+    azure-open-ai:
+        chat-model:
+          endpoint: https://xxx.openai.azure.com/
+          api-key: xxxx
+          deployment-name: gpt-35-turbo
+          max-tokens: 500
+```
+
 {{< hint info >}}
 **注意**
 以下方式配置，待验证：
@@ -61,16 +72,7 @@ langchain4j:
             temperature: 0.0
             timeout: PT60S
 ```
-azure 配置方式：
-```
-langchain4j:
-    azure:
-        chat-model:
-            endpoint: endpoint
-            api-key: demo
-            deployment-name: xxx
-            max-tokens: 20
-```
+
 qianfan 配置方式：
 ```
 langchain4j:
@@ -162,11 +164,11 @@ langchain4j:
 azure 配置方式：
 ```
 langchain4j:
-    azure:
+    azure-open-ai:
         embedding-model:
-            endpoint: ${OPENAI_API_BASE:demo}
-            api-key: ${OPENAI_API_KEY:demo}
-            deployment-name: xxx
+          endpoint: https://xxxxx.openai.azure.com/
+          api-key: 20f7b4
+          deployment-name: text-embedding-ada-002
 ```
 qianfan 配置方式：
 ```
