@@ -128,7 +128,13 @@ langchain4j:
 {{< hint info >}}
 **注意**
 如果是启动报错，version `GLIBC_2.27' not found (required by xxxlibonnxruntime.so)，如下图所示：
-原因是本地环境缺少对应库文件可尝试切换open-ai、dashscope等提供的embedding-model
+原因是libonnxruntime.so库依赖的libm.so.6库的版本不匹配。libm.so.6是GNU C库（glibc）的一部分，而libonnxruntime.so需要的glibc版本是2.27，部分系统上的glibc版本不是2.27导致报错；
+- 1.可尝试切换open-ai、dashscope等提供的embedding-model；
+- 2.最新master分支已修复；  
+https://github.com/tencentmusic/supersonic/commit/93ea7a618c2e6cc268a47242934163cf456e9544
+- 3.使用docker compose方式启动；
+
+
 {{< /hint >}}
 
 {{< figure src=/img/supersonic_inmemory_error.jpg#center >}}
