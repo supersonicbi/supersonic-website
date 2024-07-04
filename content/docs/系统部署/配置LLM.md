@@ -107,19 +107,7 @@ ollama 配置方式：
 
 
 ## Embedding Model
-### **1. 0.9.2版本及之前**
-SuperSonic0.9.2版本及之前，有三种方式配置Embedding模型：
 
-- in_process：默认采用内嵌的BgeSmallZhEmbeddingModel模型；可支持配置本地模型（需符合onnx格式）
-
-- open_ai：采用open_ai提供的Embedding模型
-
-- hugging_face：采用hugging_face提供的Embedding模型
-
-{{< figure src=/img/supersonic_embedding_model.png#center >}}
-
-
-### **2. 0.9.2版本之后**
 统一采用一种方式配置Embedding模型，支持in-memory、open-ai、zhipu、ollama、azure、qianfan、dashscope
 
 {{< figure src=/img/supersonic_embedding_model_new.png#center >}}
