@@ -46,6 +46,17 @@ langchain4j:
             temperature: ${OPENAI_TEMPERATURE:0.0}
             timeout: ${OPENAI_TIMEOUT:PT60S}
 ```
+azure 配置方式：
+```
+langchain4j:
+    azure-open-ai:
+        chat-model:
+          endpoint: https://xxx.openai.azure.com/
+          api-key: xxxx
+          deployment-name: gpt-35-turbo
+          max-tokens: 500
+```
+
 {{< hint info >}}
 **注意**
 以下方式配置，待验证：
@@ -61,16 +72,7 @@ langchain4j:
             temperature: 0.0
             timeout: PT60S
 ```
-azure 配置方式：
-```
-langchain4j:
-    azure:
-        chat-model:
-            endpoint: endpoint
-            api-key: demo
-            deployment-name: xxx
-            max-tokens: 20
-```
+
 qianfan 配置方式：
 ```
 langchain4j:
@@ -107,19 +109,7 @@ ollama 配置方式：
 
 
 ## Embedding Model
-### **1. 0.9.2版本及之前**
-SuperSonic0.9.2版本及之前，有三种方式配置Embedding模型：
 
-- in_process：默认采用内嵌的BgeSmallZhEmbeddingModel模型；可支持配置本地模型（需符合onnx格式）
-
-- open_ai：采用open_ai提供的Embedding模型
-
-- hugging_face：采用hugging_face提供的Embedding模型
-
-{{< figure src=/img/supersonic_embedding_model.png#center >}}
-
-
-### **2. 0.9.2版本之后**
 统一采用一种方式配置Embedding模型，支持in-memory、open-ai、zhipu、ollama、azure、qianfan、dashscope
 
 {{< figure src=/img/supersonic_embedding_model_new.png#center >}}
@@ -138,7 +128,13 @@ langchain4j:
 {{< hint info >}}
 **注意**
 如果是启动报错，version `GLIBC_2.27' not found (required by xxxlibonnxruntime.so)，如下图所示：
-原因是本地环境缺少对应库文件可尝试切换open-ai、dashscope等提供的embedding-model
+原因是libonnxruntime.so库依赖的libm.so.6库的版本不匹配。libm.so.6是GNU C库（glibc）的一部分，而libonnxruntime.so需要的glibc版本是2.27，部分系统上的glibc版本不是2.27导致报错；
+- 1.可尝试切换open-ai、dashscope等提供的embedding-model；
+- 2.最新master分支已修复；  
+https://github.com/tencentmusic/supersonic/commit/93ea7a618c2e6cc268a47242934163cf456e9544
+- 3.使用docker compose方式启动；
+
+
 {{< /hint >}}
 
 {{< figure src=/img/supersonic_inmemory_error.jpg#center >}}
@@ -174,11 +170,11 @@ langchain4j:
 azure 配置方式：
 ```
 langchain4j:
-    azure:
+    azure-open-ai:
         embedding-model:
-            endpoint: ${OPENAI_API_BASE:demo}
-            api-key: ${OPENAI_API_KEY:demo}
-            deployment-name: xxx
+          endpoint: https://xxxxx.openai.azure.com/
+          api-key: 20f7b4
+          deployment-name: text-embedding-ada-002
 ```
 qianfan 配置方式：
 ```
