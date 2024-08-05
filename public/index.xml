@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>项目介绍 on SuperSonic</title><link>http://localhost:1313/</link><description>Recent content in 项目介绍 on SuperSonic</description><generator>Hugo</generator><language>en-us</language><atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml"/><item><title/><link>http://localhost:1313/docs/chat-bi/%E6%A6%82%E5%BF%B5/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/chat-bi/%E6%A6%82%E5%BF%B5/</guid><description>概念 # 助理 # 智能助理可以理解为SuperSonic一系列工具的集合, 一个智能助理可以同时具备规则解析, 大模型语义解析, 插件召回等多种工具和能力。 用户可以根据自己的需要进行配置, 问答对话时也可以灵活选择需要的智能助理。 此外，因为智能助理可以选择特定的工具, 配置适合的智能助理可以减少不同工具之间的干扰，使得用户可以更加专注在自己需要的工具中。 而工具中又可以配置特定的数据集, 也可以减少不同数据集数据之间的干扰, 使得用户更容易获取到自己需要的数据。
+工具 # SuperSonic中的工具主要分为以下三种:
+1. 规则解析: 由规则实现的Text2SQL方式，优化点是解析速度快，成本低，非常适合Demo或者一些简单场景，但准确率没有大模型语义解析高。
+2. 大模型语义解析: 基于大模型实现的Text2SQL方式，能实现较复杂的Text解析。
+3. 第三方插件: 对以上两种工具的拓展，意在实现Text2SQL之外的能力，下面有详细介绍。
+插件 # 为了更好的实现用户的自定义需求，SuperSonic提供了插件市场的功能。 用户录入插件信息之后, 插件就可以被向量数据库和LLM召回, 进而执行对应的插件逻辑。目前插件分为Web页面插件和Web服务插件两类。
+Web页面插件： 插件形式为任意一个网页, 可以是一个看板, 也可以是一个解读报告, 召回之后可以把这个网页渲染到问答会话列表；
+Web服务插件： 插件形式为任意一个HTTP服务链接, 通过插件召回之后, 问答服务可以根据配置自动去调用HTTP服务链接并获取结果, 并把结果呈现到问答会话列表进行渲染。</description></item><item><title>Docker部署</title><link>http://localhost:1313/docs/%E7%B3%BB%E7%BB%9F%E9%83%A8%E7%BD%B2/docker%E9%83%A8%E7%BD%B2/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/%E7%B3%BB%E7%BB%9F%E9%83%A8%E7%BD%B2/docker%E9%83%A8%E7%BD%B2/</guid><description>部署前提 # 下载安装Docker和Docker Compose，并启动docker
+Docker版本：26.0.0+
+Docker Compose：v2.26.1+
+注意 1 如果报如下错:
+Cannot connect to the Docker daemon at unix:///Users/lexluo/.docker/run/docker.sock. Is the docker daemon running?
+说明docker没有启动
+2 supersonic_db_init主要作用是数据库数据初始化，不是常驻服务。执行完成后，exited是正常现象。
+启动部署 # 进入docker目录，执行脚步启动 # docker-compose up -d 注意 支持按SuperSonic版本启动，不指定版本默认是：latest
+SUPERSONIC_VERSION=0.9.2-SNAPSHOT docker-compose up -d 注意 镜像下载慢，可配置国内镜像源，许多国内的云服务提供商提供了Docker镜像加速服务。你可以配置Docker使用这些镜像源来加速下载。 以阿里云为例：
+登录阿里云控制台，进入容器镜像服务。 在左侧导航栏中选择“镜像加速器”。 复制加速器地址，例如 https://.mirror.aliyuncs.com。 编辑 Docker 配置文件 /etc/docker/daemon.json，添加以下内容：
+{ &amp;ldquo;registry-mirrors&amp;rdquo;: [&amp;ldquo;https://.mirror.aliyuncs.com&amp;rdquo;] } 重启 Docker 服务：
+sudo systemctl daemon-reload
+sudo systemctl restart docker 运维操作 # 1 查看进程运行状况：
+docker-compose ps 正常会出现三个服务： 2 查看进程日志信息：</description></item><item><title>概念</title><link>http://localhost:1313/docs/headless-bi/%E6%A6%82%E5%BF%B5/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/headless-bi/%E6%A6%82%E5%BF%B5/</guid><description>概念 # 总览 # 下面这个图清晰地表达了SuperSonic中Headless部分的各种概念之间的关系:
+数据集、数据模型都归属于一个主题域
+数据集可由多个模型组装而来
+数据模型由指标、维度和标签组装而成
+它们之间类似DB中的对应关系：
+Database(主题域)-&amp;gt;View(数据集)-&amp;gt;Table(数据模型)-&amp;gt;Column(指标/维度/标签)
+主题域 # 主题域可以理解为一个分类的概念，用户可以根据自己的业务场景来划分主题域。SuperSonic中的数据模型，数据集，术语等概念都归属于一个主题域。
+数据模型 # 在SuperSonic中, 数据模型是对数据库中数据的一种逻辑层面上的抽象, 它既可以直接指代一张物理表, 也可以由一段SQL逻辑创建而成。 当我们得到一张表物理表或者一段逻辑SQL后，可以将表头字段指定为主键、维度、度量、时间日期或者是普通字段， 当表头字段都被赋予这些特定的语义后， 即形成了一个数据模型。
+字段 字段类型(表/SQL表头) 语义类型(模型) imp_date Date 日期 user_name String 主键 department String 维度 pv Bigint 度量 uv Bigint 度量 主键 # SuperSonic中的主键概念不完全等同于数据库中的主键。当我们创建多个模型之后，如果需要指定模型间的关联关系，通俗来讲就是Join的方式， 就可以通过指定主键来进行关联。
+维度 # 维度指代那些表格中通常被用来进行分组和过滤的字段。
+度量 # 度量的概念则恰好和维度相反，通常是一些数值型的字段，用来表达客观现象的程度。在SuperSonic中，度量主要用来创建一个具体的指标，没有其它实质性的作用。
+指标 # 指标是相对度量更具具体和实例化的概念，用户可以基于度量，字段或者已有指标来创建指标并对它进行管理。同时，创建出来的指标也可以被问答这样的上层BI产品进行消费。
+时间日期 # 时间日期字段在SuperSonic中有比较重要的作用，比如一个典型的场景，当我们在问答中询问&amp;quot;超音数近10天访问次数&amp;quot;时，需要得到具体的 时间字段来进行时间范围的过滤。因此，提前在建模时把时间字段及其格式显示指定好，能起到很大的作用。并且，目前当模型中包含有度量时， 就必须指定时间日期字段。
+标签对象 # 在SuperSonic中，标签对象特指被标签圈选的实体对象。比如“国风类型的歌曲”，歌曲在这里就是一个标签对象，以及“访问次数超过100的用户”，用户在这里也是一个标签对象
+标签 # 标签用来圈取标签对象，比如，在上面的例子“国风类型的歌曲”，国风就是一个标签。标签可以由是一个维度，也可以是由一个指标演化而来。
+数据集 # 数据集是SuperSonic用来对接问答和其它上层BI应用的一个数据结构，在数据集中，可包含来自多个模型的维度指标。 对上层应用来说，底层建模细节是隐藏的，它只需要关注数据集中暴露出来的维度指标即可，也就是说，上层应用可以把一个数据集当作是一个大宽表，可以直接进行指标维度的分析查询。
+术语 # 企业内部通常有自己的私域知识，是否能把私域知识教给大模型对结果准确性有较大的影响。因此，SuperSonic引入了术语的概念，通过配置术语及其描述，就可以把私域知识 传授给大模型。比如SuperSonic给的样例术语：[近期]指代近10天；[核心用户]指Tom和Lucy，就能很容易让大模型学习到这个知识。</description></item><item><title>编译构建</title><link>http://localhost:1313/docs/%E7%B3%BB%E7%BB%9F%E9%83%A8%E7%BD%B2/%E7%BC%96%E8%AF%91%E6%9E%84%E5%BB%BA/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/%E7%B3%BB%E7%BB%9F%E9%83%A8%E7%BD%B2/%E7%BC%96%E8%AF%91%E6%9E%84%E5%BB%BA/</guid><description> 编译构建 # SuperSonic为二次开发提供两种编译构建方式：
+在开发调试场景，直接从本地IDE启动； 在开发部署场景，从源代码编译打包。 本地IDE启动 # sh assembly/bin/supersonic-build.sh webapp 执行构建webapp 注：前端编译需要Node，推荐安装版本v20.16.0 IDE本地启动Java类com.tencent.supersonic.StandaloneLauncher 注：后端编译需要JDK，推荐安装版本11 访问浏览器：http://localhost:9080 源代码编译包启动 # 下载相应版本source code 执行编译脚本：sh assembly/bin/supersonic-build.sh 注：前端编译需要Node，推荐安装版本v20.16.0；后端编译需要JDK，推荐安装版本11 编译完成后从assembly/build目录获取release包 解压release包，unzip supersonic-standalone-{revision}.zip 进行release目录，执行启动脚本sh bin/supersonic-daemon.sh start 访问浏览器：http://localhost:9080 附加说明 # Windows环境均有提供对应的bat脚本, 执行即可。 Ubuntu环境, 启动方式同上, 若出现报错, 可尝试https://support.huaweicloud.com/intl/zh-cn/deployman_faq/deployman_faq_1016.html。 启动之后, 可以到logs目录下查看日志，确认启动正常。</description></item><item><title/><link>http://localhost:1313/docs/chat-bi/%E9%85%8D%E7%BD%AE%E5%8A%A9%E7%90%86/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/chat-bi/%E9%85%8D%E7%BD%AE%E5%8A%A9%E7%90%86/</guid><description> 配置助理 # 1. 信息配置 # 助理的配置主要分为三个部分:
+基本信息的配置 大模型连接配置 工具配置 1.1 基本信息的配置 # 名称: 即助理的名称
+支持联想: 默认开启，开启后，用户在问答对话中输入问题时，会进行联想提示
+开启多轮: 默认关闭，开启后，用户在问答对话时，可自动保存上下文，提供多轮对话的效果
+示例问题: 配置后，用户在问答对话选择这个助理时，可以看到示例问题
+描述: 这个助理的描述信息
+1.2 大模型信息的配置 # 当前主要针对支持OpenAI协议的大模型进行配置: 1.3 工具的配置 # 规则语义解析工具的配置
+规则语义解析工具主要支持配置这个工具可作用的数据集范围以及查询模式， 通过对数据集范围的限定，就可以分场景创建助理: 大模型语义解析工具的配置 注意
+若想用到大模型的能力，则必须要配置上这个工具，并填写上面的大模型连接信息
+大模型语义解析工具主要支持配置这个工具可作用的数据集: 第三方插件工具的配置
+第三方插件工具主要支持配置选用一个具体的插件: 2. 助理使用 # 助理的使用也很简单，在问答对话左侧选择使用即可:</description></item><item><title/><link>http://localhost:1313/docs/headless-bi/%E8%BF%9E%E6%8E%A5%E6%95%B0%E6%8D%AE%E5%BA%93/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/headless-bi/%E8%BF%9E%E6%8E%A5%E6%95%B0%E6%8D%AE%E5%BA%93/</guid><description>连接数据库 # 1. 当前支持的数据类型 # 所有支持MySQL协议的数据库，如MySQL，Doris，StarRocks等 Clickhouse，PostgreSQL，H2 支持灵活扩展，欢迎贡献其它数据库类型 2. 在SuperSonic中创建数据库连接的步骤 # 填写连接信息 点击测试连接, 若连接测试通过, 则可点击保存。否则, 返回步骤1 点击保存。 如图所示, 我们创建了一个H2数据库实例作为例子:
+需要说明的是, 在这里创建数据库之后, 并不是所有人都可以查询这个数据库链接的数据, 需要在表单上进行授权。
+管理员: 可以编辑这个数据库链接的人
+使用者: 可以使用这个数据库链接查询数据的人</description></item><item><title>快速体验</title><link>http://localhost:1313/docs/%E5%BF%AB%E9%80%9F%E4%BD%93%E9%AA%8C/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/%E5%BF%AB%E9%80%9F%E4%BD%93%E9%AA%8C/</guid><description> 快速体验 # SuperSonic内置用于DEMO的语义模型和智能助理，因而只需要以下三步即可快速体验。
+启动系统 # 下载相应版本release包 解压zip包，执行启动脚本：sh bin/supersonic-daemon.sh start 访问浏览器：http://localhost:9080 注意 启动之前请安装好Java环境(JDK1.8)，Windows系统请到bin目录下执行.\supersonic-daemon.bat start 即可 测试LLM连通性 # 配置LLM # 进入菜单“助理管理”，选择系统内置的DEMO助理“来闲聊” 点击“修改信息”，选择“大模型配置”，填入自己申请的大模型服务信息，包括“Model Name”、“Base URL”以及&amp;quot;API Key&amp;quot; 点击“确定”，保存助理大模型配置 问题对话 # 进入菜单&amp;quot;问答对话&amp;quot;，选择智能助理“来闲聊” 随便输入文字，如何收到回复，则代表大模型连接成功 测试Text2SQL # 进入菜单“助理管理”，选择系统内置的DEMO助理“算指标”，配置LLM（与上节相同） 进入菜单“问答对话”，选择智能助理“算指标” 点击“新对话”，输入问题“近半个月sales部门访问量最高的用户是谁” 点击&amp;quot;LLM解析S2SQL&amp;quot;可以查看大模型生成的SQL</description></item><item><title>配置DB</title><link>http://localhost:1313/docs/%E7%B3%BB%E7%BB%9F%E9%83%A8%E7%BD%B2/%E9%85%8D%E7%BD%AEdb/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/%E7%B3%BB%E7%BB%9F%E9%83%A8%E7%BD%B2/%E9%85%8D%E7%BD%AEdb/</guid><description> 配置DB # 注意
+系统默认使用H2内存数据库, 重启后会丢失数据, 若需要替换为自己的MySQL, 请按以下进行配置.
+1. 执行SQL脚本 # 初次配置DB请依次执行conf/db下schema-mysql.sql、 data-mysql.sql, 这两个脚本均为最新表结构
+若是已配置过DB并部署好的服务, 可参考sql-update.sql, 这里会注明每次功能改动需要改动的表结构
+2. 配置YAML文件 # conf下application-local.yaml中默认的DB配置为H2配置, 替换为自己的MySQL即可
+spring: datasource: url: jdbc:mysql://localhost:3306/your_database?useUnicode=true&amp;amp;characterEncoding=UTF-8&amp;amp;useSSL=false&amp;amp;allowMultiQueries=true username: your_username password: your_password driver-class-name: com.mysql.jdbc.Driver</description></item><item><title/><link>http://localhost:1313/docs/chat-bi/%E9%97%AE%E7%AD%94%E5%AF%B9%E8%AF%9D/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/chat-bi/%E9%97%AE%E7%AD%94%E5%AF%B9%E8%AF%9D/</guid><description>问答对话 # 进入问答对话后，我们会看到如下图所示页面；主要包括三部分：助理列表、输入模块、展示模块；现在对其进行详细说明； 1. 助理列表 # 智能助理可以理解为超音数一系列工具的集合, 如单个智能助理可以集成规则解析, LLM语义解析, 插件等多种工具和能力。而每个工具可指定模型范围（支持的view列表）和查询模型，用户可以根据自己需求定制化不同的智能助理； 默认会创建算指标、标签圈选助理；助理列表是将用户创建的助理都展示在此，方便用户进行助理间的切换；
+2. 输入模块 # 输入模块主要包括文本输入框、会话管理两部分；
+2.1. 文本输入框 # 顾名思义，可在此处进行自然语音交互；如果在助理设置中开启了联想，输入文本时会实时进行联想提示
+实时联想原理：
+先对文本进行分词 然后再进行并行分段探测 选取探测文本最长的、且有联想结果的那项进行返回 2.2. 会话管理 # 主要包括四个部分：新对话、历史对话、智能助理、showcase；
+新对话，创建新的一轮对话；查询过的问题将按对话级别进行保存，后续多轮对话也是在对话基础之上进行； 历史对话，能够查询历史对话记录，包括曾经问过哪些问题以及查询结果；支持搜索、删除历史会话； 智能助理，对智能助理的管理，是否展示助理列表； showcase，通过对查询结果点赞功能加入至showcase，用于展示典型的查询case和问法； 3. 展示模块 # 展示模块主要四个部分：意图解析、SQL生成、数据查询、推荐相似问题；每部分都会记录耗时；如下图所示：
+3.1. 意图解析 # 用于展示supersonic对输入文本的解析；parser阶段会生成多个解析结果，如上图生成2个解析，可点击切换解析结果；
+为了让用户快速分析识别结果，解析内容目前包括：识别到的数据模型、查询模式、指标以及筛选条件等关键数据；
+其中筛选条件可按需修改，如数据时间的灵活切换、切换其他维度值；修改条件后，点击重新查询即可；
+3.2. SQL生成 # SQL生成展示按照解析类型分为两类，Rule解析、LLM解析；
+Rule解析：主要包括解析S2SQL、修正S2Sql、最终执行SQL; Rule解析S2SQL是通过按规则方式从文本中解析维度、维度值、指标等内容，构造成S2SQL；再经过修正操作生成修正S2SQL；Headless再将S2SQL解析成最终可在数据库引擎的执行SQL；
+LLM解析：在Rule解析基础上增加Schema映射、Few-shot示例信息；这两项是用于与大模型交互构造prompt，并生成S2SQL时使用到的信息；
+3.3. 数据查询 # 主要功能是展示查询结果；根据返回结果的不同，前端灵活展示不同的样式；
+结果中存在时间、指标，则展示指标趋势；
+结果中只有一条数据则展示指标卡；
+结果中存在多个维度、指标等，则按照表格进行展示；
+注意
+几点说明如下：
+如果是指标模式，并且返回结果中存在指标，会进行指标的同环比计算，如上图；
+如果是趋势图，可进行固定天数的时间范围切换；如近7天、近30天等；点击最右侧可进行切换；
+指标和维度推荐；在查询结果下方，会展示推荐的维度和指标；点击指标，则整个查询会切换成该指标查询；点击维度，会按照该维度进行下钻查询；
+4. 推荐相似问题 # 每次用户查询成功的问题会被记录下来，并按对话级别向量化存储到向量数据库；用于后续用户查询时召回相似问题使用；用户输入新问题时，使用输入文本按相似度召回已成功的问题，供用户选择；</description></item><item><title>构建模型</title><link>http://localhost:1313/docs/headless-bi/%E6%9E%84%E5%BB%BA%E6%A8%A1%E5%9E%8B/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/headless-bi/%E6%9E%84%E5%BB%BA%E6%A8%A1%E5%9E%8B/</guid><description>构建模型 # 建模的目的
+为了帮助你更好地理解建模的过程, 我们通过一个问题示例来进行介绍: SuperSonic本身作为一个产品, 那么如何用语义建模来统计它的埋点访问数据呢？比如SuperSonic在一段时间内的访问用户数是多少？ 这些用户的访问次数和停留时长是怎样的？这些用户来自哪些部门？这些用户看了哪些页面？分别看了多少次？等我们建模完成, 这些问题的答案也就浮出水面了。
+1. 创建一个主题域和模型集 # 如图所示, 为了统计SuperSonic的埋点访问情况, 我们创建了一个叫&amp;quot;超音数&amp;quot;的主题域以及基于SuperSonic的埋点数据创建了一个&amp;quot;埋点模型集&amp;quot;:
+2. 创建数据模型 # 创建好了一个模型集后, 我们就可以把物理数据抽象为一个个数据模型并创建到模型集下。如下图, SuperSonic提供了两种创建数据模型的方式。
+快速创建可以直接指定一张物理表来把它创建为数据模型。
+SQL脚本则提供了更灵活的数据模型创建方式, 我们可以通过写一条逻辑SQL来把它指定为数据模型。
+2.1 编辑SQL创建数据模型 # 在填写完数据模型名称和描述等基本信息后，我们首先写一条SQL来表达我们的数据模型逻辑。 然后点击运行, 就可以看到这条SQL查询出来的数据。 校验数据无误之后, 我们可以点击生成数据模型。
+注意 这里选择数据库链接的时候, 需要有数据库的使用者权限。 如图，我们把这条SQL的表头字段指定为日期，主键，维度和度量之后，还可以写一条过滤SQL用于词典导入场景。 举个例子，在问答中，如果需要对维度值进行识别，那么就需要提前把维度值写入到词典，但是当我们希望对维度值做一些过滤的时候，如在音乐场景里， 我们只希望把国风类型的歌曲导入到词典中，那么就可以通过这条SQL来进行过滤。
+快速创建 若勾选，则会直接把选中的维度/度量批量创建到维度/指标列表。 2.2 指定库表名快速创建模型 # 如图，在选择快速创建的方式之后，需要先填写该模型依赖的数据库连接，然后系统会自动拉取这个数据库连接的元数据，用户直接选择库名和表名并填写基本信息就可以进入到下一步。 在第二步中，和上述通过SQL脚本来创建模型的方式基本一致，就不再重复介绍了。
+如下图所示, 重复以上步骤，为我们创建的3个数据模型示例, 分别为:
+用户部门: 主要包含用户以及用户的部门信息
+PVUV统计: 主要包含用户访问次数和访问人数等信息
+停留时长统计: 主要包含用户的停留时长信息
+同时，在刚刚创建模型时，我们把一些字段标识为了维度/度量，并勾选了快速创建，因此，可以在对应模型中的指标维度列表看到已快速创建好的指标维度:
+到此为止, 我们就成功把超音数的访问统计数据建模成了相关的数据模型、维度和指标。
+3. 创建模型间连接 # 可以看到，刚刚创建的这些指标和维度分散在不同的模型里，那么如果想要在一次查询里同时包含这些指标和维度，如&amp;quot;按部门统计访问次数&amp;quot;，应该还要继续如何配置呢？我们可以在模型列表右上角点击切换到画布模式，并创建模型间的连接关系，如下图: 到目前为止，我们就创建好了指标维度，以及模型间的关联关系。但要想被上层应用使用到，这还不够，还需要进行最后一步，创建一个数据集。</description></item><item><title>贡献指南</title><link>http://localhost:1313/docs/%E8%B4%A1%E7%8C%AE%E6%8C%87%E5%8D%97/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/%E8%B4%A1%E7%8C%AE%E6%8C%87%E5%8D%97/</guid><description>👍🎉 首先，感谢您花时间为本项目做出贡献！🎉👍
+1. 创建issue # 在提交Issue之前，请先检查项目的Issue跟踪器，以确保没有其他人已经报告了相同的问题或请求了相同的功能。 Issue提交规范示例：
+标题格式请用：【{模块名}】+标题内容 选择提交issue对应的Labels（如bug、documentation、question等） 选择Milestone迭代完成周期 2. Fork和Clone代码 # 进入supersonic github页面，点击页面右上角的&amp;quot;Fork&amp;quot;按钮。这将在你的GitHub账户下创建项目的一个副本。 在你的机器上clone Fork的仓库： git clone https://github.com/&amp;lt;your_github_name&amp;gt;/supersonic.git cd supersonic 将supersonic添加为本地仓库的远程分支upstream git remote add upstream https://github.com/tencentmusic/supersonic 同步远端主分支至本地 git pull upstream master --rebase 3. 修改提交 # 创建一个新的分支并修改代码，并推送到自己仓库
+git checkout -b your-branch-name git add . git commit -m &amp;#34;(improvement | feature | fix)(headless | chat | common | launcher) &amp;lt;commit description&amp;gt;&amp;#34; git push origin your-branch-name commit规范:
+commit请使用英文，长度控制在50字符以内 commit提交格式 格式：(type)(scope) commit description type: 提交类型，如improvement、feature、fix、doc、style、test等 scope: 修改范围，如headless、chat、common、launcher模块 commit description：提交的详细描述，可以包含更多的细节和上下文。 4.</description></item><item><title>配置LLM</title><link>http://localhost:1313/docs/%E7%B3%BB%E7%BB%9F%E9%83%A8%E7%BD%B2/%E9%85%8D%E7%BD%AEllm/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/%E7%B3%BB%E7%BB%9F%E9%83%A8%E7%BD%B2/%E9%85%8D%E7%BD%AEllm/</guid><description>配置LLM # Chat Model # SuperSonic可以从两个粒度配置Chat Model：
+1. 系统粒度 # 1.2.修改langchain4j.yaml配置文件方式 # 从0.9.4版本开始，langchain4j配置从application.yaml文件中单独抽取，方便用户配置；以langchain4j-local.yaml为例配置：
+目前支持：open-ai、ollama两种方式； 1、open_ai 用于连接云端模型；通常情况下各云上模型会兼容open-ai协议 2、ollama 用于连接本地模型；由ollama适配不同的模型
+注意 推荐使用open_ai、ollama；其他azure、qianfan、dashscope、zhipu方式理论上也支持，但是待验证； open-ai 配置方式：
+langchain4j: open-ai: chat-model: base-url: ${OPENAI_API_BASE:demo} api-key: ${OPENAI_API_KEY:demo} model-name: ${OPENAI_MODEL_NAME:gpt-3.5-turbo} temperature: ${OPENAI_TEMPERATURE:0.0} timeout: ${OPENAI_TIMEOUT:PT60S} ollama 配置方式：
+langchain4j: ollama: chat-model: base-url: ${OPENAI_API_BASE:demo} api-key: ${OPENAI_API_KEY:demo} model-name: ${OPENAI_MODEL_NAME:gpt-3.5-turbo} temperature: ${OPENAI_TEMPERATURE:0.0} timeout: ${OPENAI_TIMEOUT:PT60S} azure 配置方式：
+langchain4j: azure-open-ai: chat-model: endpoint: https://xxx.openai.azure.com/ api-key: xxxx deployment-name: gpt-35-turbo max-tokens: 500 注意 以下方式配置，待验证： zhipu 配置方式：
+langchain4j: zhipu: chat-model: base-url: base-url api-key: demo model-name: xxx temperature: 0.</description></item><item><title>项目架构</title><link>http://localhost:1313/docs/%E9%A1%B9%E7%9B%AE%E6%9E%B6%E6%9E%84/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/%E9%A1%B9%E7%9B%AE%E6%9E%B6%E6%9E%84/</guid><description>项目架构 # 架构图 # 核心组件 # Knowledge Base： 定期从语义模型中提取相关的模式信息，构建词典和索引，以便后续的模式映射。
+Schema Mapper： 将自然语言文本在知识库中进行匹配，为后续的语义解析提供相关信息。
+Semantic Parser： 理解用户查询并抽取语义信息，生成语义查询语句S2SQL。
+Semantic Corrector： 检查语义查询语句的合法性，对不合法的信息做修正和优化处理。
+Semantic Translator： 将语义查询语句翻译成可在物理数据模型上执行的SQL语句。
+Chat Plugin： 通过第三方工具扩展功能。给定所有配置的插件及其功能描述和示例问题，大语言模型将选择最合适的插件。
+Chat Memory： 将历史的查询轨迹进行封装，可被召回作为few-shot样例嵌入提示词。</description></item><item><title/><link>http://localhost:1313/docs/chat-bi/%E9%85%8D%E7%BD%AE%E6%8F%92%E4%BB%B6/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/chat-bi/%E9%85%8D%E7%BD%AE%E6%8F%92%E4%BB%B6/</guid><description>配置插件 # 1.1 新建插件 # 打开超音数首页，点击&amp;quot;插件管理&amp;quot; -&amp;gt; &amp;ldquo;新建插件&amp;rdquo;，即可新建插件，进行配置。
+新建插件时需要填写以下信息：
+1.2 编辑插件 # 如果需要对现有插件内容进行编辑, 可以通过点击&amp;quot;插件市场&amp;quot;, 对以下字段(主题域、插件名称、函数描述、插件类型)进行查询，然后选择自己需要的插件右侧的&amp;quot;编辑&amp;quot;选项, 即可对插件录入的所有信息进行编辑修改。
+如果需要删除某一个插件, 直接点击对应插件右侧的&amp;quot;删除&amp;quot;即可。 1.3 插件效果 # 1.3.1 Web 页面效果展示 # 下面以插件&amp;quot;艺人趋势解读&amp;quot;作为Web页面的demo展示。 当用户选择插件所属的数据集&amp;quot;问答艺人数据集&amp;quot;, 并输入问题&amp;quot;林俊杰近期音乐表现如何&amp;quot;。超音数会将分析该问题, 最后召回&amp;quot;艺人趋势解读&amp;quot;插件，插件主要配置信息如下:
+在我们的场景中,最终会将一个解读报告的页面渲染到当前问答会话列表，效果如下:
+1.3.2 Web 服务效果展示 # 下面以插件&amp;quot;版权知识库&amp;quot;作为Web服务的demo展示。 当用户选择插件所属的数据集&amp;quot;问答艺人数据集&amp;quot;, 并输入问题&amp;quot;林俊杰近期音乐表现如何&amp;quot;。超音数会将分析该问题, 最后召回&amp;quot;艺人趋势解读&amp;quot;插件，插件主要配置信息如下:
+在&amp;quot;问答对话&amp;quot;中选择版权知识库后，输入以下问题：&amp;ldquo;请介绍一下什么是音乐作品&amp;rdquo;。此后，超音数通过插件召回, 将问题文本作为输入参数，发送给&amp;quot;地址&amp;quot;对应的Web服务, 最终获取对应的查询结果在界面上作展示。 在我们的场景中,最终会将Web服务的输出展示到当前问答会话列表, 具体效果如下:</description></item><item><title/><link>http://localhost:1313/docs/headless-bi/%E5%88%9B%E5%BB%BA%E6%8C%87%E6%A0%87/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/headless-bi/%E5%88%9B%E5%BB%BA%E6%8C%87%E6%A0%87/</guid><description>创建指标 # 在构建模型时，我们已经展示了如何在创建模型的时候通过快速创建的方式来创建指标。 接下来，我们继续展示下如何通过手动自定义的方式来创建指标。 创建出来后，通过进一步进行下钻维度等配置，就可以在指标市场查看这几个指标的基本数据情况。
+在创建新的指标之前，我们首先看看访问次数这个指标的定义。如图，访问次数这个指标是在创建模型时通过快速创建的方式创建出来的，已经初始化了名称等基本信息。 上面表格中除了基本的名称信息以外，还包括:
+别名: 别名是这个指标的其它名称，如访问次数这个指标又可以被称为PV。
+分类: 分类是对这个指标的描述，如访问次数这个指标可被归类为核心指标，访问相关指标等。
+敏感度：默认为普通。敏感度为核心的指标会有权限控制，具体会在权限篇进行详细介绍。
+下钻维度：即这个指标可与哪些维度来下钻。配置了之后，这个指标在进行查询时，就只能根据这几个维度进行下钻。这个配置会作用到指标主页以及问答的推荐维度。
+数据格式化: 即在查询出这个指标数据后，对指标数据格式进行可视化，如图，可以将它格式化为小数以及百分数。
+接下来，我们来查看指标的表达式信息。可以看到，我们一共提供了三种创建指标的模式：按度量，按指标，按字段。
+1 按度量创建指标 # 访问次数这个指标通过快速创建的方式创建出来，默认的模式为按度量。 选中s2_pv_uv_statis_pv这个度量并在下面的表达式框中直接填写s2_pv_uv_statis_pv， 表明这个指标是通过s2_pv_uv_statis_pv直接创建而来。
+注意
+s2_pv_uv_statis_pv这个度量名字是由模型英文名s2_pv_uv_statis和字段pv拼接而成， 且由于在创建模型的时候已经指定了聚合方式为SUM了，所以这里的表达式无需再填写聚合函数。
+以上，我们就介绍完了访问次数这个指标包含的基本信息以及它的表达式定义。接下来，我们开始来通过按指标和按字段两种模式来创建新的指标: 访问用户数和人均访问次数。
+2 按字段创建指标 # 首先，我们来创建访问用户数。如图，我们补充好了访问用户数的基本信息，并给它添加了一个别名：UV。
+接着，我们来配置下访问用户数的下钻维度，可以看到，我们选中了部门这个维度作为它的下钻维度，并勾选了绑定。绑定的含义是我们在查询这个指标时，必须配合这个维度来进行查询，否则提示缺少下钻维度。
+下钻维度配置
+可配置的下钻维度不仅仅来自指标当前模型，还可来自与该模型有关联关系的模型。
+然后，我们来选择按字段的方式来进行表达式的定义，这些字段来自当前模型。可以看到我们选择了user_id这个字段来创建指标，并定义了字段表达式。由于字段上不包含聚合函数，因此需要在写表达式的时候指定聚合函数。
+点击完成之后，我们就完成了访问用户数这个指标的定义。
+3 基于已有指标来创建指标 # 最后，我们来创建人均访问次数这个指标，由于基本信息的补充都基本类似，就不再介绍啦。我们选择按指标的模式来定义表达式，通过分析，人均访问次数这个指标可由访问次数和访问用户数这两个指标结合起来创建。因此，如下图我们选中了访问次数和访问用户数这两个指标，并通过pv/uv的方式来表达人均访问次数。</description></item><item><title/><link>http://localhost:1313/docs/headless-bi/%E7%AE%A1%E7%90%86%E6%8C%87%E6%A0%87/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/headless-bi/%E7%AE%A1%E7%90%86%E6%8C%87%E6%A0%87/</guid><description>管理指标 # 1. 指标列表页 # 首先，我们可以点击顶部指标市场TAB来看下目前系统中一共有哪些指标。在指标市场这个页面中，不仅可以支持按自然语言的方式对指标进行检索，也可以对指标进行收藏，便于下次查找。
+2. 指标详情页 # 然后，我们可以点击具体的指标，进入到指标的详情页。如图，我们进入到访问次数这个指标的详情页，可以看到它的基本信息以及具体数据趋势和表格明细。 同时，还可以根据我们刚刚配置的下钻维度来对指标数据进行下钻和过滤。并且，若需要对数据进行下载离线分析，可直接点击下载按钮进行下载即可。</description></item><item><title/><link>http://localhost:1313/docs/headless-bi/%E7%BB%84%E8%A3%85%E6%95%B0%E6%8D%AE%E9%9B%86/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/headless-bi/%E7%BB%84%E8%A3%85%E6%95%B0%E6%8D%AE%E9%9B%86/</guid><description> 组装数据集 # 1. 挑选指标维度 # 如下图，创建数据集时，首先填写好数据集的名称等基本信息，然后即可进入到下一步，可以选择相同主题域下的所有模型，并挑选符合场景需要的指标维度加入到数据集中。
+注意 加入到数据集的指标维度所在的模型必须已在构建模型时配置好关联关系，否则将会提示报错。 2. 查询设置 # 指标模式: 可设置默认时间范围
+明细模式: 可设置默认时间以及查询表头
+注意 当未能从问询文本中得到时间信息时，默认会用这里的时间作为过滤条件，若不想加上时间限制，请把时间设置为-1</description></item><item><title/><link>http://localhost:1313/docs/headless-bi/%E9%85%8D%E7%BD%AE%E6%95%B0%E6%8D%AE%E6%9D%83%E9%99%90/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/headless-bi/%E9%85%8D%E7%BD%AE%E6%95%B0%E6%8D%AE%E6%9D%83%E9%99%90/</guid><description> 数据权限控制 # SuperSonic支持四级数据权限控制, 分别为主题域权限、模型权限、行权限和列权限。
+1. 主题域和模型权限 # 主题域权限和模型权限又可分为以下两种类别的权限:
+管理权限: 即可管理该主题域/模型下所有资源的权限
+数据浏览权限: 在问答可以问询该主题域/模型下的维度和指标的权限
+1.1 配置主题域/模型权限 # 注意
+这里对用户配置的数据浏览权限，指的是用户可以查看这个主题域/模型下的敏感度为普通和重要的指标/维度，核心指标/维度需要另外通过列权限单独开通; 而如果配置的是管理权限，则默认有该数据模型下所有行列权限。
+1.2 主题域/模型权限控制效果 # 如下图，alice只被授权了用户部门这个数据模型的管理权限，因此在管理页面，其它数据模型的是对她不可见的 同时，alice也没有被授权PVUV统计这个数据模型的数据浏览权限，因此，她在问询时，无法问询得到相关的数据 2.行列权限 # 行列权限可在模型的权限管理里面进行设置, 本质上是限制用户对维度和指标的访问控制。
+2.1 行权限 # 注意 行权限指的是对用户可见的数据行进行控制，若不设置，默认所有行可见。 如下图，对tom进行了行权限控制，tom被设置为只能看它自己的访问数据。 因此，tom在问询时，就会被提示结果数据已经经过过滤处理，以及具体的过滤条件: 2.2 列权限 # 注意 列权限设置中，均只展示被设置为核心敏感度的和指标/维度(敏感度可在指标/维度编辑的时候进行设置)，非核心敏感度的指标/维度不再需要配置。 如下图，页面这个维度以及停留时长这个指标在建模时，敏感度被设置为核心，默认用户是不可查看它们的数据的，下图把它们授权给jack， jack因此可以在问答时有了访问它们的权限。 而当lucy来问询停留时长这个核心指标时，就会被提示暂无权限</description></item><item><title>chat-sdk集成</title><link>http://localhost:1313/docs/chat-sdk%E9%9B%86%E6%88%90/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/chat-sdk%E9%9B%86%E6%88%90/</guid><description>chat-sdk 集成 # 问答对话页支持以下两种方式集成：
+npm 组件包集成 iframe 嵌入 npm 组件包集成 # 进入到/webapp/packages/chat-sdk 目录，修改 package.json { &amp;#34;name&amp;#34;: &amp;#34;xxx-chat-sdk&amp;#34;, &amp;#34;version&amp;#34;: &amp;#34;x.x.x&amp;#34;, ... } 执行npm run build 执行npm publish，将组件发布到 npm 仓库 在 react 前端项目执行npm install xxx-chat-sdk，安装 chat-sdk 组件包 在 react 前端项目中引入 chat-sdk 包 import { Chat } from &amp;#39;xxx-chat-sdk&amp;#39;; const ChatPage = () =&amp;gt; { return ( &amp;lt;Chat token=&amp;#34;xxx&amp;#34; /&amp;gt; ); }; export default ChatPage; 通过以上步骤便可以将问答对话页集成到业务系统中了
+提示
+npm 包名 name 和版本 version 需要自行根据项目业务需要进行设置 token 为 supersonic 用户登录认证 token iframe 嵌入 # 将以下代码加入业务系统前端项目组件中</description></item><item><title>FAQ</title><link>http://localhost:1313/docs/faq/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/faq/</guid><description>FAQ # 项目有没有体验的地址？ # A: Playground访问地址：http://117.72.46.148:9080
+初始启动后为什么能显示DEMO问答对话？ # A: 为了便于快速体验，系统内置DEMO语义模型，且实现了基于规则的解析器，所以不需要大模型也可以进行问答对话。不过，规则解析器能力有限，推荐仅用于测试验证，生产使用还是需要大模型解析。
+是否自带大模型服务？ # A: 项目内置langchain4j社区提供的demo API key，但单次请求openai大模型限制在1000 token，因而只能用于快速体验。要正常体验问答对话，请自行申请大模型服务。
+支持哪些大模型服务？ # A: 当前主要支持兼容open_ai接口协议的大模型服务，比如GPT、GLM、DeepSeek、Qwen、Moonshot等。文心和混元正在验证中，敬请期待。
+是否支持文本知识库？ # A: 当前主要聚焦于结构化数据的问答，文本数据将在未来版本加入支持。
+是否支持多轮对话？ # A: 自0.9.2版本起已经支持多轮对话，但默认是关闭的，需要在助理配置里开启。
+重启系统后为什么配置的助理/模型数据丢失了？ # A: 系统默认使用H2内存数据库，如果需要持久化存储需配置DB，参考文档
+系统默认的账号和密码是什么？ # A: 系统默认创建的用户有admin, jack, tom, lucy, alice，密码都是：123456
+如果要用我自己的数据进行测试，我至少需要经过哪些步骤 # A: 连接数据库 -&amp;gt; 构造模型(创建指标和维度) -&amp;gt; 组装数据集 -&amp;gt; 创建助理和工具
+是否可以提供接口供第三方应用调用？ # A: 可以，启动系统后查看swagger接口文档：http://localhost:9080/swagger-ui/index.html
+有哪些国内的大模型服务对接？ # A: 当前我们验证过一些主流大模型服务，其申请链接如下表所示：
+提供商 API申请链接 推荐模型 智谱AI https://open.bigmodel.cn/api/paas/v4 glm-4 阿里云 https://dashscope.aliyuncs.com/compatible-mode/v1 qwen-max 幻方 https://api.</description></item><item><title/><link>http://localhost:1313/docs/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E7%BD%AE/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E7%BD%AE/</guid><description>快速补充中&amp;hellip;</description></item><item><title/><link>http://localhost:1313/docs/headless-bi/%E6%A0%87%E7%AD%BE/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/headless-bi/%E6%A0%87%E7%AD%BE/</guid><description>标签 # 标签主要面向基于一个标签对象上, 进行圈选和洞察的场景；
+1. 标签对象 # 每一个标签都需要依赖于一个特定的标签对象,标签对象类似于一个实体,一般是有一个主键的。
+1.1 新建标签对象 # 新建标签对象的途径为: 语义建模 -&amp;gt; 选择主题域 -&amp;gt; 标签对象管理 -&amp;gt; 创建标签对象
+新建标签对象时, 需要填入以下信息:
+1.2 绑定标签对象 # 完成标签对象的创建后, 就可以在特定的模型的编辑页面上, 将其挂载到某一个标签对象上去, 只需要将该模型下的主键字段绑定到特定标签对象即可:
+2. 导出标签 # 完成 1.1 中相关标签对象的设置后, 就可以将该模型上的维度/指标批量导出为标签了。 如图选择特定的艺人库模型, 选择维度管理, 选择需要的维度(demo中选择了活跃区域和代表作), 然后选择批量操作中的 &amp;ldquo;导出为标签&amp;rdquo;。
+当然也可以通过编辑特定的维度来完成单个标签的导出:
+以上针对维度进行了导出标签操作, 如果要将指标导出为标签方法类似。
+3. 标签市场 # 完成 1.2 中标签的导出后, 就可以在标签市场中看到上述导出的标签:
+我们还支持查看具体的标签详情, 点击具体某一个标签会发现有如下信息:</description></item></channel></rss>
