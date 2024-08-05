@@ -53,13 +53,24 @@ sudo systemctl restart docker
 {{< /hint >}}
 
 ## 运维操作
-查看进程运行状况：
+1 查看进程运行状况：  
 `
 docker-compose ps
 `
 正常会出现三个服务：
 {{< figure src=/img/docker_service.png#center >}}
 
+2 查看进程日志信息：  
+`
+docker exec -it supersonic_standalone bash
+`
+
+进入logs目录查看日志
+`
+cd logs
+`
+
 
 ## 验证
-待各服务成功启动后，访问链接：http://localhost:9080
+待各服务成功启动后，访问链接：http://localhost:9080  
+如果无法打开链接，请尝试升级Docker Compose到26.0.0+ 、Docker版本到26.0.0+ 
