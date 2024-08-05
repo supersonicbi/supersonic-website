@@ -73,4 +73,4 @@ cd logs
 
 ## 验证
 待各服务成功启动后，访问链接：http://localhost:9080  
-如果无法打开链接，请尝试升级Docker Compose/Docker版本
+如果无法打开链接，请尝试升级Docker Compose到26.0.0+ 、Docker版本到26.0.0+ 
