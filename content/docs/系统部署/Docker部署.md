@@ -4,18 +4,13 @@ weight = 1
 +++
 
 # 部署前提
-下载安装Docker和Docker Compose，并启动docker  
-Docker版本：26.0.0+  
-Docker Compose：v2.26.1+
+下载安装Docker和Docker Compose，并启动docker
 
 {{< hint info >}}
 **注意**
-1 如果报如下错:  
+如果报如下错:  
 Cannot connect to the Docker daemon at unix:///Users/lexluo/.docker/run/docker.sock. Is the docker daemon running?   
 说明docker没有启动
-
-2 supersonic_db_init主要作用是数据库数据初始化，不是常驻服务。执行完成后，exited是正常现象。
-
 {{< /hint >}}
 
 
