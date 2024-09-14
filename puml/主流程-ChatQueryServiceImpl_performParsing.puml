@@ -1,0 +1,147 @@
+@startuml
+!define PROJECT_DIR ..
+!define CHAT_DIR PROJECT_DIR\chat\server\src\main\java\com\tencent\supersonic\chat\server
+!define HEADLESS_SERVER_DIR PROJECT_DIR\headless\server\src\main\java\com\tencent\supersonic\headless\server
+!define ChatManageServiceImpl_PATH CHAT_DIR\service\impl\ChatManageServiceImpl.java
+!define ChatQueryServiceImpl_PATH CHAT_DIR\service\impl\ChatQueryServiceImpl.java
+!define NL2SQLParser_PATH CHAT_DIR\parser\NL2SQLParser.java
+!define S2ChatLayerService_PATH HEADLESS_SERVER_DIR\facade\service\impl\S2ChatLayerService.java
+!define ChatWorkflowEngine_PATH HEADLESS_SERVER_DIR\utils\ChatWorkflowEngine.java
+
+participant Actor
+note over Actor #FF8247
+点击连接跳转对应代码或子流程
+（需要放在代码根目录doc目录下）
+end note
+Actor -> ChatQueryServiceImpl: [[ChatQueryServiceImpl_PATH#performParsing performParsing]]
+activate ChatQueryServiceImpl
+ChatQueryServiceImpl -> ChatManageServiceImpl : [[ChatManageServiceImpl_PATH#createChatQuery createChatQuery]]
+activate ChatManageServiceImpl
+ChatManageServiceImpl --> ChatQueryServiceImpl
+deactivate ChatManageServiceImpl
+ChatQueryServiceImpl -> ChatQueryServiceImpl: [[ChatQueryServiceImpl_PATH#buildParseContext buildParseContext]]
+ChatQueryServiceImpl -> ChatQueryServiceImpl: [[ChatQueryServiceImpl_PATH#supplyMapInfo supplyMapInfo]]
+note right
+补充多轮对话Map信息
+end note
+ChatQueryServiceImpl -> NL2SQLParser : [[NL2SQLParser_PATH#parse parse]]
+activate NL2SQLParser
+NL2SQLParser -> NL2SQLParser : [[NL2SQLParser_PATH#processMultiTurn processMultiTurn]]
+note right
+处理多轮对话
+召回历史对话，通过LLM汇总成新问题
+end note
+NL2SQLParser -> NL2SQLParser : [[NL2SQLParser_PATH#addDynamicExemplars addDynamicExemplars]]
+note right
+召回freeshot
+根据Parse并发度配置，可能会在解析语义SQL时召回更多freeshot
+end note
+NL2SQLParser -> S2ChatLayerService: [[S2ChatLayerService_PATH#performParsing performParsing]]
+note right
+解析LLMSQL过程
+时序图中忽略规则、插件解析过程
+end note
+activate S2ChatLayerService
+S2ChatLayerService-> S2ChatLayerService: [[S2ChatLayerService_PATH#buildChatQueryContext buildChatQueryContext]]
+S2ChatLayerService-> ChatWorkflowEngine: [[ChatWorkflowEngine_PATH#execute execute]]
+activate ChatWorkflowEngine
+ChatWorkflowEngine -> ChatWorkflowEngine : [[ChatWorkflowEngine_PATH#performMapping performMapping]]
+activate ChatWorkflowEngine
+ChatWorkflowEngine -> EmbeddingMapper :EmbeddingMapper doMap <size 17>**[[Mapper阶段_EmbeddingMapper_doMap.puml 时序图]]**</size>
+note right
+向量数据库中召回维度、指标等Schema数据
+end note
+activate EmbeddingMapper
+EmbeddingMapper --> ChatWorkflowEngine
+deactivate EmbeddingMapper
+ChatWorkflowEngine -> KeywordMapper :KeywordMapper doMap <size 17>**[[Mapper阶段_KeywordMapper_doMap.puml 时序图]]**</size>
+note right
+检索树中召回Schema
+相比Embedding增加术语、纬度值召回
+end note
+activate KeywordMapper
+KeywordMapper --> ChatWorkflowEngine
+deactivate KeywordMapper
+ChatWorkflowEngine -> TermDescMapper :TermDescMapper doMap
+note right
+根据Embedding或Keyword的Map到的术语
+召回术语相关的词条，比如定义“高级用户”术语：等级大于等于3的用户
+如果之前Mapper匹配到“高级用户”词条
+则在此Mapper中通过替换QueryText重新通过Embedding、Keyword召回
+将“等级”加入到召回结果
+end note
+activate TermDescMapper
+TermDescMapper --> ChatWorkflowEngine
+deactivate TermDescMapper
+
+ChatWorkflowEngine -> ChatWorkflowEngine : [[ChatWorkflowEngine_PATH#performParsing performParsing]]
+activate ChatWorkflowEngine
+ChatWorkflowEngine -> LLMSqlParser :LLMSqlParser parse <size 17>**[[Parse阶段_LLMSqlParser_parse.puml 时序图]]**</size>
+note right
+语义SQL解析过程，详细规则参考子时序图
+end note
+activate LLMSqlParser
+LLMSqlParser --> ChatWorkflowEngine
+deactivate LLMSqlParser
+ChatWorkflowEngine -> QueryTypeParser :QueryTypeParser parse <size 17>**[[Parse阶段_QueryTypeParser_parse.puml 时序图]]**</size>
+note right
+解析语义SQL类型，详细规则参考子时序图
+end note
+activate QueryTypeParser
+QueryTypeParser --> ChatWorkflowEngine
+deactivate QueryTypeParser
+ChatWorkflowEngine -> ChatWorkflowEngine : [[ChatWorkflowEngine_PATH#performCorrecting performCorrecting]]
+activate ChatWorkflowEngine
+ChatWorkflowEngine -> SchemaCorrector :SchemaCorrector doCorrect <size 17>**[[Correct阶段_SchemaCorrector_doCorrect.puml 时序图]]**</size>
+note right
+包括对Alias别名、聚合函数进行处理
+根据Map到的Link信息纠正过滤条件
+end note
+activate SchemaCorrector
+SchemaCorrector --> ChatWorkflowEngine
+deactivate SchemaCorrector
+ChatWorkflowEngine -> TimeCorrector :TimeCorrector doCorrect
+note right
+尝试对时间进行纠正
+1. 如果有时间分区，则默认使用时间分区：
+   比如Query："最近10天的播放量"，没有Map到时间字段，默认使用分区时间
+2. 如果有时间分区，则可以同时支持其他时间维度
+   比如Query："注册日期8月份的用户最近10天的播放量"，可以同时支持时间分区、注册日期的过滤
+3. 如果有时间分区，且配置数据集查询时间范围，则时间分区会有最大该范围限制。
+4. 如果有时间分区，配置数据集查询时间范围-1，则不加限制使用LLM生成范围。
+5. 没有时间分区，根据代码逻辑使用第一个匹配到的时间维度当作默认时间。
+逻辑大体可以参考测试用例：TimeCorrectorTest
+end note
+activate TimeCorrector
+TimeCorrector --> ChatWorkflowEngine
+deactivate TimeCorrector
+ChatWorkflowEngine -> GrammarCorrector :GrammarCorrector doCorrect <size 17>**[[Correct阶段_GrammarCorrector_doCorrect.puml 时序图]]**</size>
+note right
+对select、where、groupby、having语法进行纠错
+end note
+activate GrammarCorrector
+GrammarCorrector --> ChatWorkflowEngine
+deactivate GrammarCorrector
+ChatWorkflowEngine -> ChatWorkflowEngine : performTranslating [[ChatWorkflowEngine_PATH#performTranslating performTranslating]]
+ChatWorkflowEngine -> SemanticLayerService : translate <size 17>**[[Translate阶段_ChatWorkflowEngine_performTranslating.puml 时序图]]**</size>
+note right
+物理SQL解析过程
+end note
+activate SemanticLayerService
+SemanticLayerService --> ChatWorkflowEngine
+deactivate SemanticLayerService
+ChatWorkflowEngine -> ChatWorkflowEngine : performProcessing [[ChatWorkflowEngine_PATH#performProcessing performProcessing]]
+note right
+对生成结果进行结构化解析
+以供页面展示相应的信息，及二次数据查询
+end note
+activate ChatWorkflowEngine
+ChatWorkflowEngine --> S2ChatLayerService
+deactivate ChatWorkflowEngine
+S2ChatLayerService --> NL2SQLParser
+deactivate S2ChatLayerService
+NL2SQLParser -> NL2SQLParser : [[NL2SQLParser_PATH#rewriteErrorMessage rewriteErrorMessage]]
+note right: 通过LLM汇总问题进行提示
+NL2SQLParser --> ChatQueryServiceImpl
+deactivate NL2SQLParser
+@enduml

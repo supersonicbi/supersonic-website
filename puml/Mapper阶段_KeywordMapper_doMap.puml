@@ -1,0 +1,86 @@
+@startuml
+!define PROJECT_DIR ..
+!define HEADLESS_DIR PROJECT_DIR\headless\chat\src\main\java\com\tencent\supersonic\headless
+!define COMMON_DIR  PROJECT_DIR\common\src\main\java\com\tencent\supersonic\common
+!define EmbeddingMapper_PATH HEADLESS_DIR\chat\mapper\EmbeddingMapper.java
+!define KeywordMapper_PATH HEADLESS_DIR\chat\mapper\KeywordMapper.java
+
+!define EmbeddingMatchStrategy_PATH HEADLESS_DIR\chat\mapper\EmbeddingMatchStrategy.java
+!define HanlpDictMatchStrategy_PATH HEADLESS_DIR\chat\mapper\HanlpDictMatchStrategy.java
+!define DatabaseMatchStrategy_PATH HEADLESS_DIR\chat\mapper\DatabaseMatchStrategy.java
+
+!define MetaEmbeddingService_PATH HEADLESS_DIR\chat\knowledge\MetaEmbeddingService.java
+!define EmbeddingService_PATH COMMON_DIR\service\impl\EmbeddingServiceImpl.java
+!define HanlpHelper_PATH HEADLESS_DIR\chat\knowledge\helper\HanlpHelper.java
+!define KnowledgeBaseService_PATH HEADLESS_DIR\chat\knowledge\KnowledgeBaseService.java
+!define SearchService_PATH HEADLESS_DIR\chat\knowledge\SearchService.java
+
+participant Actor
+Actor -> KeywordMapper : [[KeywordMapper_PATH#doMap doMap]]
+activate KeywordMapper
+KeywordMapper -> KeywordMapper : [[HanlpHelper_PATH#getTerms getTerms]]
+note right
+1. Viterbi分词器
+2. 支持索引模式、自定义词典、词语偏移，关闭命名实体识别等
+3. 过滤所有数据集内相关词性的term
+end note
+KeywordMapper -> HanlpDictMatchStrategy : [[HanlpDictMatchStrategy_PATH#getMatches getMatches]]
+activate HanlpDictMatchStrategy
+HanlpDictMatchStrategy -> HanlpDictMatchStrategy : [[HanlpDictMatchStrategy_PATH#filterByDataSetId filterByDataSetId]]
+note right: 根据数据集过滤term
+HanlpDictMatchStrategy -> HanlpDictMatchStrategy : [[HanlpDictMatchStrategy_PATH#match match]]
+activate HanlpDictMatchStrategy
+HanlpDictMatchStrategy -> HanlpDictMatchStrategy : [[HanlpDictMatchStrategy_PATH#detect detect]]
+note right
+遍历文本的每一个可能的子字符串片段，
+并利用提供的分词和偏移进行内容检测。
+每找到一个符合条件的片段，就记录并在最终返回这个结果列表
+end note
+activate HanlpDictMatchStrategy
+HanlpDictMatchStrategy -> HanlpDictMatchStrategy: [[HanlpDictMatchStrategy_PATH#detectByStep detectByStep]]
+note right: MAPPER_DETECTION_MAX_SIZE:一次探测前后缀匹配结果返回个数
+HanlpDictMatchStrategy -> KnowledgeBaseService: [[KnowledgeBaseService_PATH#prefixSearch prefixSearch]]
+activate KnowledgeBaseService
+KnowledgeBaseService -> SearchService: [[SearchService_PATH#prefixSearch prefixSearch]]
+activate SearchService
+SearchService -> SearchService: [[SearchService_PATH#search search]]
+note right
+在二进制字典树（BinTrie）中搜索给定键值匹配的所有条目。
+将输入的键转换为小写以进行不区分大小写的匹配，并初始化一个空的 TreeSet
+用于存储匹配的结果。深度优先遍历给定的键的每个字符逐层查找字典树中的分支节点，
+直到找到所有匹配的条目，并将其添加到结果集合中
+end note
+SearchService --> KnowledgeBaseService
+KnowledgeBaseService --> HanlpDictMatchStrategy
+HanlpDictMatchStrategy -> KnowledgeBaseService: [[KnowledgeBaseService_PATH#suffixSearch suffixSearch]]
+KnowledgeBaseService -> SearchService: [[SearchService_PATH#suffixSearch suffixSearch]]
+SearchService -> SearchService: [[SearchService_PATH#search search]]
+
+SearchService --> KnowledgeBaseService
+deactivate SearchService
+KnowledgeBaseService --> HanlpDictMatchStrategy
+deactivate KnowledgeBaseService
+HanlpDictMatchStrategy -> HanlpDictMatchStrategy: 合并前后缀匹配结果
+HanlpDictMatchStrategy -> HanlpDictMatchStrategy: [[HanlpDictMatchStrategy_PATH#getThresholdMatch getThresholdMatch]]
+note right
+计算阈值
+MAPPER_NAME_THRESHOLD: 指标名、维度名文本相似度阈值
+MAPPER_NAME_THRESHOLD_MIN: 指标名、维度名最小文本相似度阈值
+MAPPER_VALUE_THRESHOLD: 维度值文本相似度阈值
+MAPPER_VALUE_THRESHOLD_MIN: 维度值最小文本相似度阈值
+end note
+HanlpDictMatchStrategy -> HanlpDictMatchStrategy: 根据相似度过滤
+HanlpDictMatchStrategy --> KeywordMapper
+deactivate HanlpDictMatchStrategy
+deactivate HanlpDictMatchStrategy
+deactivate HanlpDictMatchStrategy
+KeywordMapper -> KeywordMapper : [[KeywordMapper_PATH#convertHanlpMapResultToMapInfo convertHanlpMapResultToMapInfo]]
+note right: 将nlp的match结果转换成map结果，拼接相关element元信息
+activate KeywordMapper
+KeywordMapper -> KeywordMapper : transLetterOriginal
+KeywordMapper -> DatabaseMatchStrategy : [[DatabaseMatchStrategy_PATH#getMatches getMatches]]
+activate DatabaseMatchStrategy
+
+DatabaseMatchStrategy --> KeywordMapper
+
+@enduml

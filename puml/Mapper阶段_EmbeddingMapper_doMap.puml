@@ -1,0 +1,83 @@
+@startuml
+!define PROJECT_DIR ..
+!define HEADLESS_DIR PROJECT_DIR\headless\chat\src\main\java\com\tencent\supersonic\headless
+!define COMMON_DIR  PROJECT_DIR\common\src\main\java\com\tencent\supersonic\common
+!define EmbeddingMapper_PATH HEADLESS_DIR\chat\mapper\EmbeddingMapper.java
+!define EmbeddingMatchStrategy_PATH HEADLESS_DIR\chat\mapper\EmbeddingMatchStrategy.java
+!define MetaEmbeddingService_PATH HEADLESS_DIR\chat\knowledge\MetaEmbeddingService.java
+!define EmbeddingService_PATH COMMON_DIR\service\impl\EmbeddingServiceImpl.java
+!define HanlpHelper_PATH HEADLESS_DIR\chat\knowledge\helper\HanlpHelper.java
+
+participant Actor
+Actor -> EmbeddingMapper: [[EmbeddingMapper_PATH#doMap doMap]]
+  activate EmbeddingMapper
+    EmbeddingMapper -> EmbeddingMapper : [[EmbeddingMatchStrategy_PATH#getTerms getTerms]]
+    note right
+    分词之前版本用来加快embedding阶段
+    目前版本看起来用的是detect中的召回长度、步长来控制
+    end note
+    EmbeddingMapper -> EmbeddingMatchStrategy : [[EmbeddingMatchStrategy_PATH#getMatches getMatches]]
+    activate EmbeddingMatchStrategy
+      EmbeddingMatchStrategy -> EmbeddingMatchStrategy : [[EmbeddingMatchStrategy_PATH#filterByDataSetId filterByDataSetId]]
+      note right: 分词过滤
+      EmbeddingMatchStrategy -> EmbeddingMatchStrategy: [[EmbeddingMatchStrategy_PATH#match match]]
+      activate EmbeddingMatchStrategy
+        EmbeddingMatchStrategy -> EmbeddingMatchStrategy : [[EmbeddingMatchStrategy_PATH#detect detect]]
+        note right
+        根据文本大小和步长配置参数将,
+        查询文本分割成较小的段，然后对这些段进行批量检测
+        EMBEDDING_MAPPER_TEXT_SIZE:用于向量召回文本长度
+        EMBEDDING_MAPPER_TEXT_STEP:向量召回文本每步长度
+        注：建议增大SIZE配置，防止截断关键信息失去上下文语义
+        end note
+        activate EmbeddingMatchStrategy
+          EmbeddingMatchStrategy -> EmbeddingMatchStrategy: [[EmbeddingMatchStrategy_PATH#detectByBatch detectByBatch]]
+          note right: EMBEDDING_MAPPER_BATCH:批量向量召回文本请求个数
+          activate EmbeddingMatchStrategy
+            EmbeddingMatchStrategy -> EmbeddingMatchStrategy: [[EmbeddingMatchStrategy_PATH#detectByQueryTextsSub detectByQueryTextsSub]]
+            note right
+            1. 构建参数，可以调整向量召回相似度阈值、最小阈值
+            EMBEDDING_MAPPER_THRESHOLD
+            EMBEDDING_MAPPER_THRESHOLD_MIN
+            2.可以调整参数控制召回个数(单subtext非整体)
+            EMBEDDING_MAPPER_NUMBER
+            3.执行召回
+            4.构建返回结果
+            注：可以根据模型能力适当降低阈值、增加召回个数
+            end note
+            activate MetaEmbeddingService
+              EmbeddingMatchStrategy -> MetaEmbeddingService : [[MetaEmbeddingService_PATH#retrieveQuery retrieveQuery]]
+              note right:将模型id加入到Filter
+              activate EmbeddingService
+                MetaEmbeddingService -> EmbeddingService: [[EmbeddingService_PATH#retrieveQuery retrieveQuery]]
+                note right:获取embeddingStore、embeddingModel
+                activate EmbeddingService
+                  EmbeddingService -> EmbeddingService: [[EmbeddingService_PATH#retrieveSingleQuery retrieveSingleQuery]]
+                  note right: 构建request，加入filter，并执行查询数据
+                  activate EmbeddingService
+                  activate EmbeddingModel
+                  EmbeddingService -> EmbeddingModel: embed
+                  EmbeddingModel --> EmbeddingService
+                  deactivate EmbeddingModel
+                  EmbeddingService -> EmbeddingService: [[EmbeddingService_PATH#createCombinedFilter createCombinedFilter]]
+                  activate EmbeddingStore
+                  EmbeddingService -> EmbeddingStore: search
+                  Embedding写入流程 --> EmbeddingStore: <size 17>**[[EmbeddingService_PATH#createCombinedFilter emebedding写入流程]]**</size>
+                  EmbeddingStore --> EmbeddingService
+                  EmbeddingService-->MetaEmbeddingService
+                  deactivate EmbeddingStore
+                  deactivate EmbeddingService
+                deactivate EmbeddingService
+              deactivate EmbeddingService
+            MetaEmbeddingService --> EmbeddingMatchStrategy
+            deactivate MetaEmbeddingService
+          deactivate EmbeddingMatchStrategy
+          deactivate EmbeddingMatchStrategy
+deactivate EmbeddingMatchStrategy
+EmbeddingMatchStrategy --> EmbeddingMapper
+deactivate EmbeddingMatchStrategy
+EmbeddingMapper -> EmbeddingMapper : [[HanlpHelper_PATH#transLetterOriginal transLetterOriginal]]
+EmbeddingMapper -> EmbeddingMapper : 构建返回结果
+
+return
+@enduml

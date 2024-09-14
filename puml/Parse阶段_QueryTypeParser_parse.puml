@@ -1,0 +1,86 @@
+@startuml
+participant Actor
+Actor -> QueryTypeParser : parse
+activate QueryTypeParser
+QueryTypeParser -> SemanticQuery : initS2Sql
+activate SemanticQuery
+SemanticQuery --> QueryTypeParser
+deactivate SemanticQuery
+QueryTypeParser -> QueryTypeParser : getQueryType
+activate QueryTypeParser
+QueryTypeParser -> SqlSelectHelper : getWhereFields
+activate SqlSelectHelper
+SqlSelectHelper -> SqlSelectHelper : getPlainSelect
+activate SqlSelectHelper
+SqlSelectHelper --> SqlSelectHelper
+deactivate SqlSelectHelper
+SqlSelectHelper -> SqlSelectHelper : getWhereFields
+activate SqlSelectHelper
+SqlSelectHelper --> SqlSelectHelper
+deactivate SqlSelectHelper
+SqlSelectHelper --> QueryTypeParser
+deactivate SqlSelectHelper
+QueryTypeParser -> QueryTypeParser : filterByTimeFields
+activate QueryTypeParser
+QueryTypeParser -> QueryTypeParser : field ->
+activate QueryTypeParser
+QueryTypeParser --> QueryTypeParser
+deactivate QueryTypeParser
+QueryTypeParser --> QueryTypeParser
+deactivate QueryTypeParser
+QueryTypeParser -> SemanticSchema : getEntities
+activate SemanticSchema
+SemanticSchema -> SemanticSchema : getElementsByDataSetId
+activate SemanticSchema
+SemanticSchema --> SemanticSchema
+deactivate SemanticSchema
+SemanticSchema --> QueryTypeParser
+deactivate SemanticSchema
+QueryTypeParser -> SqlSelectHelper : whereFilterByTimeFields::contains
+activate SqlSelectHelper
+SqlSelectHelper -> SqlSelectHelper : getPlainSelect
+activate SqlSelectHelper
+SqlSelectHelper --> SqlSelectHelper
+deactivate SqlSelectHelper
+SqlSelectHelper -> SqlSelectHelper : getSelectFields
+activate SqlSelectHelper
+SqlSelectHelper --> SqlSelectHelper
+deactivate SqlSelectHelper
+SqlSelectHelper --> QueryTypeParser
+deactivate SqlSelectHelper
+QueryTypeParser -> QueryTypeParser : SchemaElement::getName
+activate QueryTypeParser
+QueryTypeParser -> QueryTypeParser : field ->
+activate QueryTypeParser
+QueryTypeParser --> QueryTypeParser
+deactivate QueryTypeParser
+QueryTypeParser --> QueryTypeParser
+deactivate QueryTypeParser
+QueryTypeParser -> SemanticSchema : getTags
+activate SemanticSchema
+SemanticSchema -> SemanticSchema : schemaElement ->
+activate SemanticSchema
+SemanticSchema -> SemanticSchema : d ->
+activate SemanticSchema
+SemanticSchema --> SemanticSchema
+deactivate SemanticSchema
+SemanticSchema --> SemanticSchema
+deactivate SemanticSchema
+SemanticSchema --> QueryTypeParser
+deactivate SemanticSchema
+QueryTypeParser -> QueryTypeParser : SchemaElement::getName
+activate QueryTypeParser
+QueryTypeParser -> SqlSelectHelper : getSelectFields
+activate SqlSelectHelper
+SqlSelectHelper --> QueryTypeParser
+deactivate SqlSelectHelper
+QueryTypeParser -> SemanticSchema : getMetrics
+activate SemanticSchema
+SemanticSchema --> QueryTypeParser
+deactivate SemanticSchema
+QueryTypeParser --> QueryTypeParser
+deactivate QueryTypeParser
+QueryTypeParser --> QueryTypeParser
+deactivate QueryTypeParser
+return
+@enduml
