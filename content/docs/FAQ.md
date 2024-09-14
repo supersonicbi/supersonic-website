@@ -49,7 +49,7 @@ A: 可以，启动系统后查看swagger接口文档：http://localhost:9080/swa
 
 ## 有哪些国内的大模型服务对接？
 A: 当前我们验证过一些主流大模型服务，其申请链接如下表所示：
-| 提供商   | API申请链接                                       | 推荐模型       |
+| 提供商   | API服务URL                                       | 推荐模型       |
 |----------|---------------------------------------------------|----------------|
 | 智谱AI   | https://open.bigmodel.cn/api/paas/v4              | glm-4          |
 | 阿里云   | https://dashscope.aliyuncs.com/compatible-mode/v1 | qwen-max       |
