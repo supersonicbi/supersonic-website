@@ -1,0 +1,66 @@
+@startuml
+!define PROJECT_DIR ..
+!define HEADLESS_DIR PROJECT_DIR\headless\chat\src\main\java\com\tencent\supersonic\headless
+!define COMMON_DIR  PROJECT_DIR\common\src\main\java\com\tencent\supersonic\common
+!define SchemaCorrector_DIR HEADLESS_DIR\chat\corrector\SchemaCorrector.java
+!define GrammarCorrector_DIR HEADLESS_DIR\chat\corrector\GrammarCorrector.java
+!define SelectCorrector_DIR HEADLESS_DIR\chat\corrector\SelectCorrector.java
+!define WhereCorrector_DIR HEADLESS_DIR\chat\corrector\WhereCorrector.java
+!define GroupByCorrector_DIR HEADLESS_DIR\chat\corrector\GroupByCorrector.java
+!define AggCorrector_DIR HEADLESS_DIR\chat\corrector\AggCorrector.java
+!define HavingCorrector_DIR HEADLESS_DIR\chat\corrector\HavingCorrector.java
+
+participant Actor
+Actor -> GrammarCorrector : [[GrammarCorrector_DIR#doCorrect doCorrect]]
+activate GrammarCorrector
+GrammarCorrector -> SelectCorrector : [[SelectCorrector_DIR#doCorrect doCorrect]]
+note right
+对select的语义sql进行修正，比如以下情况
+SELECT 中字段不足：当聚合字段和选择字段数量不匹配时
+DETAIL明细模式且使用通配符 *：在 DETAIL 查询类型中使用 * 时，添加默认度量和维度。
+ORDER BY 字段需要加入 SELECT：依据配置项决定是否将 ORDER BY 字段加入到 SELECT 中。
+确保 GROUP BY 字段在 SELECT 中：确保 GROUP BY 子句中的字段出现在 SELECT 语句中。
+end note
+activate SelectCorrector
+SelectCorrector --> GrammarCorrector
+deactivate SelectCorrector
+GrammarCorrector -> WhereCorrector : [[WhereCorrector_DIR#doCorrect doCorrect]]
+note right
+1.将llm生成的枚举值进行映射，比如where 等级=2级=>等级=2
+2. 使用QueryFilter增加过滤条件（如果使用llm而非规则一般不会触发这步)
+end note
+activate WhereCorrector
+WhereCorrector --> GrammarCorrector
+deactivate WhereCorrector
+GrammarCorrector -> GroupByCorrector : [[GroupByCorrector_DIR#doCorrect doCorrect]]
+note right
+     判断是否需要添加group by
+     * 查询类型必须是 {@link QueryType#METRIC}。
+     * 修正后的 SQL 查询（S2SQL）中不应包含 `DISTINCT` 子句。
+     * 选择字段列表和维度列表不应为空。
+     * 选择字段不应仅包含一个日期维度（如 {@link TimeDimensionEnum#DAY}）。
+     * 修正后的 SQL 查询（S2SQL）中不应已经存在 `GROUP BY` 子句。
+     * 可选的配置项（`s2.corrector.additional.information`）存在且设为 `true`。
+end note
+activate GroupByCorrector
+GroupByCorrector --> GrammarCorrector
+deactivate GroupByCorrector
+GrammarCorrector -> AggCorrector : [[AggCorrector_DIR#doCorrect doCorrect]]
+note right
+如果LLM生成SQL中指标缺少聚合函数，同时又有Group By
+则使用指标配置的聚合函数进行修正
+end note
+activate AggCorrector
+AggCorrector --> GrammarCorrector
+deactivate AggCorrector
+GrammarCorrector -> HavingCorrector : [[HavingCorrector_DIR#doCorrect doCorrect]]
+note right
+1. 当有group by将过滤条件里的有聚合函数指标放到having中
+2. 将having语法中的聚合函数同时加到select中
+end note
+activate HavingCorrector
+HavingCorrector --> GrammarCorrector
+deactivate HavingCorrector
+GrammarCorrector -> GrammarCorrector : [[GrammarCorrector_DIR#removeSameFieldFromSelect removeSameFieldFromSelect]]
+return
+@enduml

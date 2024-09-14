@@ -1,0 +1,99 @@
+@startuml
+!define PROJECT_DIR ..
+!define HEADLESS_DIR PROJECT_DIR\headless\chat\src\main\java\com\tencent\supersonic\headless
+!define COMMON_DIR  PROJECT_DIR\common\src\main\java\com\tencent\supersonic\common
+!define LLMSqlParser_PATH HEADLESS_DIR\chat\parser\llm\LLMSqlParser.java
+!define LLMRequestService_PATH HEADLESS_DIR\chat\parser\llm\LLMRequestService.java
+!define OnePassSCSqlGenStrategy_PATH HEADLESS_DIR\chat\parser\llm\OnePassSCSqlGenStrategy.java
+!define PromptHelper_PATH HEADLESS_DIR\chat\parser\llm\PromptHelper.java
+!define LLMResponseService_PATH HEADLESS_DIR\chat\parser\llm\LLMResponseService.java
+!define ExemplarServiceImpl_PATH COMMON_DIR\service\impl\ExemplarServiceImpl.java
+!define SqlValidHelper_PATH COMMON_DIR\jsqlparser\SqlValidHelper.java
+!define DataSetResolver_PATH HEADLESS_DIR\chat\parser\llm\HeuristicDataSetResolver.java
+
+participant Actor
+Actor -> LLMSqlParser : parse
+activate LLMSqlParser
+LLMSqlParser -> LLMSqlParser : [[LLMRequestService_PATH#isSkip isSkip]]
+LLMSqlParser -> LLMSqlParser : [[LLMSqlParser_PATH#tryParse tryParse]]
+LLMSqlParser -> LLMRequestService : [[LLMRequestService_PATH#getDataSetId getDataSetId]]
+note right
+获取最匹配的数据集
+优先能Map到的数量
+其次相似度
+end note
+activate LLMRequestService
+LLMRequestService -> DataSetResolver : [[DataSetResolver_PATH#resolve resolve]]
+activate DataSetResolver
+DataSetResolver -> DataSetResolver : [[DataSetResolver_PATH#selectDataSetBySchemaElementMatchScore selectDataSetBySchemaElementMatchScore]]
+activate DataSetResolver
+DataSetResolver -> DataSetResolver :[[DataSetResolver_PATH#getDataSetTypeMap getDataSetTypeMap]]
+note right:对数据集聚合找到最大相似度
+activate DataSetResolver
+DataSetResolver --> LLMRequestService
+deactivate DataSetResolver
+deactivate DataSetResolver
+deactivate DataSetResolver
+LLMRequestService --> LLMSqlParser
+deactivate LLMRequestService
+activate LLMSqlParser
+
+LLMSqlParser -> LLMSqlParser : [[LLMSqlParser_PATH#getRecallMaxRetries getRecallMaxRetries]]
+LLMSqlParser -> LLMRequestService : [[LLMRequestService_PATH#getLlmReq getLlmReq]]
+note right: 构建llmreq之后会用来生成prompt
+activate LLMRequestService
+LLMRequestService --> LLMSqlParser
+LLMSqlParser -> LLMRequestService : [[LLMRequestService_PATH#runText2SQL runText2SQL]]
+note left: 默认为3次重试
+LLMRequestService -> SqlGenStrategy: [[OnePassSCSqlGenStrategy_PATH#generate generate]]
+activate SqlGenStrategy
+SqlGenStrategy -> PromptHelper: [[PromptHelper_PATH#getFewShotExemplars getFewShotExemplars]]
+note right
+1. 获取配置参数，如果之前获取的freeshot不足则再进行召回
+2. 如果并发数>1，每个并发随机抽取freeshot
+end note
+activate PromptHelper
+PromptHelper -> ExemplarService: [[PromptHelper_PATH#recallExemplars recallExemplars]]
+activate ExemplarService
+ExemplarService --> PromptHelper
+deactivate ExemplarService
+PromptHelper --> SqlGenStrategy
+deactivate PromptHelper
+SqlGenStrategy -> SqlGenStrategy: [[OnePassSCSqlGenStrategy_PATH#generatePrompt generatePrompt]]
+note right
+拼接schema、sideinfo(当前日期等信息),freeshot
+如果有用户自定义prompt模版则套用用户模版
+end note
+SqlGenStrategy -> SqlGenStrategy: [[OnePassSCSqlGenStrategy_PATH#getChatLanguageModel getChatLanguageModel]]
+note right
+获取配置的模型，目前已接入奇智
+end note
+SqlGenStrategy -> ChatLanguageModel: generate
+note right: chat模型
+activate ChatLanguageModel
+ChatLanguageModel --> SqlGenStrategy
+deactivate ChatLanguageModel
+
+
+
+SqlGenStrategy --> LLMRequestService
+deactivate SqlGenStrategy
+LLMRequestService --> LLMSqlParser
+deactivate LLMRequestService
+
+LLMSqlParser -> LLMResponseService : [[LLMResponseService_PATH#getDeduplicationSqlResp getDeduplicationSqlResp]]
+note right
+对并发的sql进行去重，意义不大
+其中对sql合法性校验需要注意
+end note
+activate LLMResponseService
+LLMResponseService -> SqlValidHelper: [[SqlValidHelper_PATH#isValidSQL isValidSQL]]
+note right: 合法性校验
+activate SqlValidHelper
+SqlValidHelper --> LLMResponseService
+deactivate SqlValidHelper
+LLMResponseService --> LLMSqlParser
+deactivate LLMResponseService
+
+LLMSqlParser -> LLMSqlParser : [[LLMResponseService_PATH#addParseInfo addParseInfo]]
+@enduml

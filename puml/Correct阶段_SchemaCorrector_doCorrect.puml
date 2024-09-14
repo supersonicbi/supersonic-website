@@ -1,0 +1,51 @@
+@startuml
+!define PROJECT_DIR ..
+!define HEADLESS_DIR PROJECT_DIR\headless\chat\src\main\java\com\tencent\supersonic\headless
+!define COMMON_DIR  PROJECT_DIR\common\src\main\java\com\tencent\supersonic\common
+!define SchemaCorrector_DIR HEADLESS_DIR\chat\corrector\SchemaCorrector.java
+
+participant Actor
+Actor -> SchemaCorrector : [[SchemaCorrector_DIR#doCorrect doCorrect]]
+activate SchemaCorrector
+SchemaCorrector -> SchemaCorrector : [[SchemaCorrector_DIR#correctAggFunction correctAggFunction]]
+note right
+对聚合函数进行correct，比如select 最多(v)=>select max(v)，
+映射关系在AggregateEnum中（同时处理where,order by，having等)
+end note
+activate SchemaCorrector
+SchemaCorrector --> SchemaCorrector
+deactivate SchemaCorrector
+SchemaCorrector -> SchemaCorrector : [[SchemaCorrector_DIR#replaceAlias replaceAlias]]
+note right
+对sql中的alias进行修正——当生成的alias和其中指标字段不同时删除alias，
+相同时不处理（同时处理where,order by，having等)
+end note
+activate SchemaCorrector
+SchemaCorrector --> SchemaCorrector
+deactivate SchemaCorrector
+SchemaCorrector -> SchemaCorrector : [[SchemaCorrector_DIR#updateFieldNameByLinkingValue updateFieldNameByLinkingValue]]
+note right
+尝试根据Link信息，将LLM生成错误的FieldName根据Value映射成正确的
+比如等级=张三=>创作者名=>张三
+end note
+activate SchemaCorrector
+SchemaCorrector --> SchemaCorrector
+deactivate SchemaCorrector
+SchemaCorrector -> SchemaCorrector : [[SchemaCorrector_DIR#updateFieldValueByLinkingValue updateFieldValueByLinkingValue]]
+note right
+尝试根据Link信息，将LLM生成错误的FieldValue根据Name映射成正确的
+比如杰伦=>周杰伦
+link信息非techValue一致，所以whereCorrector的value映射不重复
+end note
+activate SchemaCorrector
+SchemaCorrector --> SchemaCorrector
+deactivate SchemaCorrector
+SchemaCorrector -> SchemaCorrector : [[SchemaCorrector_DIR#correctFieldName correctFieldName]]
+note right
+未get到使用场景、理解是想把alias->filedName
+end note
+activate SchemaCorrector
+SchemaCorrector --> SchemaCorrector
+deactivate SchemaCorrector
+return
+@enduml

@@ -1,0 +1,382 @@
+@startuml
+participant Actor
+Actor -> ChatWorkflowEngine : performTranslating
+activate ChatWorkflowEngine
+ChatWorkflowEngine -> ChatWorkflowEngine : parseInfo ->
+activate ChatWorkflowEngine
+ChatWorkflowEngine -> QueryManager : createQuery
+activate QueryManager
+QueryManager -> QueryManager : containsRuleQuery
+activate QueryManager
+QueryManager --> QueryManager
+deactivate QueryManager
+QueryManager -> QueryManager : createRuleQuery
+activate QueryManager
+QueryManager -> QueryManager : getSemanticQuery
+activate QueryManager
+QueryManager --> QueryManager
+deactivate QueryManager
+QueryManager --> QueryManager
+deactivate QueryManager
+QueryManager -> QueryManager : createLLMQuery
+activate QueryManager
+QueryManager -> QueryManager : getSemanticQuery
+activate QueryManager
+QueryManager --> QueryManager
+deactivate QueryManager
+QueryManager --> QueryManager
+deactivate QueryManager
+QueryManager --> ChatWorkflowEngine
+deactivate QueryManager
+ChatWorkflowEngine -> SemanticQuery : buildSemanticQueryReq
+activate SemanticQuery
+SemanticQuery --> ChatWorkflowEngine
+deactivate SemanticQuery
+ChatWorkflowEngine -> ContextUtils : getBean
+activate ContextUtils
+ContextUtils --> ChatWorkflowEngine
+deactivate ContextUtils
+ChatWorkflowEngine -> S2SemanticLayerService : translate
+activate S2SemanticLayerService
+S2SemanticLayerService -> S2SemanticLayerService : buildQueryStatement
+activate S2SemanticLayerService
+S2SemanticLayerService -> S2SemanticLayerService : buildSqlQueryStatement
+activate S2SemanticLayerService
+S2SemanticLayerService -> QuerySqlReq : needGetDataSetId
+activate QuerySqlReq
+QuerySqlReq --> S2SemanticLayerService
+deactivate QuerySqlReq
+S2SemanticLayerService -> DataSetServiceImpl : getDataSetIdFromSql
+activate DataSetServiceImpl
+DataSetServiceImpl -> SqlSelectHelper : getTableName
+activate SqlSelectHelper
+SqlSelectHelper --> DataSetServiceImpl
+deactivate SqlSelectHelper
+DataSetServiceImpl -> DataSetServiceImpl : getDataSets
+activate DataSetServiceImpl
+DataSetServiceImpl --> DataSetServiceImpl
+deactivate DataSetServiceImpl
+DataSetServiceImpl --> S2SemanticLayerService
+deactivate DataSetServiceImpl
+S2SemanticLayerService -> S2SemanticLayerService : buildSchemaFilterReq
+activate S2SemanticLayerService
+S2SemanticLayerService --> S2SemanticLayerService
+deactivate S2SemanticLayerService
+S2SemanticLayerService -> SchemaServiceImpl : fetchSemanticSchema
+activate SchemaServiceImpl
+SchemaServiceImpl -> SchemaServiceImpl : buildSemanticSchema
+activate SchemaServiceImpl
+SchemaServiceImpl --> SchemaServiceImpl
+deactivate SchemaServiceImpl
+SchemaServiceImpl --> S2SemanticLayerService
+deactivate SchemaServiceImpl
+S2SemanticLayerService -> QueryReqConverter : convert
+activate QueryReqConverter
+QueryReqConverter -> QueryReqConverter : convertNameToBizName
+activate QueryReqConverter
+QueryReqConverter --> QueryReqConverter
+deactivate QueryReqConverter
+QueryReqConverter -> QueryReqConverter : functionNameCorrector
+activate QueryReqConverter
+QueryReqConverter --> QueryReqConverter
+deactivate QueryReqConverter
+QueryReqConverter -> QueryReqConverter : correctTableName
+activate QueryReqConverter
+QueryReqConverter --> QueryReqConverter
+deactivate QueryReqConverter
+QueryReqConverter -> SqlSelectHelper : getTableName
+activate SqlSelectHelper
+SqlSelectHelper --> QueryReqConverter
+deactivate SqlSelectHelper
+QueryReqConverter -> SqlReplaceHelper : replaceAggAliasOrderItem
+activate SqlReplaceHelper
+SqlReplaceHelper --> QueryReqConverter
+deactivate SqlReplaceHelper
+QueryReqConverter -> SqlSelectHelper : getAllSelectFields
+activate SqlSelectHelper
+SqlSelectHelper --> QueryReqConverter
+deactivate SqlSelectHelper
+QueryReqConverter -> QueryReqConverter : getMetrics
+activate QueryReqConverter
+QueryReqConverter -> QueryReqConverter : m ->
+activate QueryReqConverter
+QueryReqConverter --> QueryReqConverter
+deactivate QueryReqConverter
+QueryReqConverter --> QueryReqConverter
+deactivate QueryReqConverter
+QueryReqConverter -> QueryReqConverter : getDimensions
+activate QueryReqConverter
+QueryReqConverter --> QueryReqConverter
+deactivate QueryReqConverter
+QueryReqConverter -> SqlGenerateUtils : generateInternalMetricName
+activate SqlGenerateUtils
+SqlGenerateUtils -> QueryReqConverter : m ->
+activate QueryReqConverter
+QueryReqConverter --> SqlGenerateUtils
+deactivate QueryReqConverter
+SqlGenerateUtils --> QueryReqConverter
+deactivate SqlGenerateUtils
+QueryReqConverter -> QueryReqConverter : getAggOption
+activate QueryReqConverter
+QueryReqConverter --> QueryReqConverter
+deactivate QueryReqConverter
+QueryReqConverter -> EngineType : fromString
+activate EngineType
+EngineType --> QueryReqConverter
+deactivate EngineType
+QueryReqConverter -> SqlGenerateUtils : isSupportWith
+activate SqlGenerateUtils
+SqlGenerateUtils --> QueryReqConverter
+deactivate SqlGenerateUtils
+QueryReqConverter -> QueryReqConverter : generateDerivedMetric
+activate QueryReqConverter
+QueryReqConverter --> QueryReqConverter
+deactivate QueryReqConverter
+QueryReqConverter -> QueryStructUtils : getDateConfBySql
+activate QueryStructUtils
+QueryStructUtils --> QueryReqConverter
+deactivate QueryStructUtils
+QueryReqConverter -> QueryReqConverter : getQueryType
+activate QueryReqConverter
+QueryReqConverter --> QueryReqConverter
+deactivate QueryReqConverter
+QueryReqConverter -> QueryReqConverter : convert
+activate QueryReqConverter
+QueryReqConverter --> QueryReqConverter
+deactivate QueryReqConverter
+QueryReqConverter -> QueryStructUtils : getBeginEndTime
+activate QueryStructUtils
+QueryStructUtils --> QueryReqConverter
+deactivate QueryStructUtils
+QueryReqConverter --> S2SemanticLayerService
+deactivate QueryReqConverter
+S2SemanticLayerService -> QueryUtils : enableOptimize
+activate QueryUtils
+QueryUtils --> S2SemanticLayerService
+deactivate QueryUtils
+S2SemanticLayerService -> SemanticSchemaManager : getSemanticModel
+activate SemanticSchemaManager
+SemanticSchemaManager -> SchemaServiceImpl : getSchemaYamlTpl
+activate SchemaServiceImpl
+SchemaServiceImpl --> SemanticSchemaManager
+deactivate SchemaServiceImpl
+SemanticSchemaManager -> DatabaseConverter : convert
+activate DatabaseConverter
+DatabaseConverter --> SemanticSchemaManager
+deactivate DatabaseConverter
+SemanticSchemaManager -> SemanticSchemaManager : getJoinRelation
+activate SemanticSchemaManager
+SemanticSchemaManager -> SemanticSchemaManager : getDatasource
+activate SemanticSchemaManager
+SemanticSchemaManager --> SemanticSchemaManager
+deactivate SemanticSchemaManager
+SemanticSchemaManager -> SemanticSchemaManager : item ->
+activate SemanticSchemaManager
+SemanticSchemaManager --> SemanticSchemaManager
+deactivate SemanticSchemaManager
+SemanticSchemaManager -> SemanticSchemaManager : (k1,k2) ->
+activate SemanticSchemaManager
+SemanticSchemaManager --> SemanticSchemaManager
+deactivate SemanticSchemaManager
+SemanticSchemaManager --> SemanticSchemaManager
+deactivate SemanticSchemaManager
+SemanticSchemaManager -> SemanticSchemaManager : getDimensions
+activate SemanticSchemaManager
+SemanticSchemaManager --> SemanticSchemaManager
+deactivate SemanticSchemaManager
+SemanticSchemaManager -> SemanticSchemaManager : getMetrics
+activate SemanticSchemaManager
+SemanticSchemaManager --> SemanticSchemaManager
+deactivate SemanticSchemaManager
+SemanticSchemaManager --> S2SemanticLayerService
+deactivate SemanticSchemaManager
+S2SemanticLayerService --> S2SemanticLayerService
+deactivate S2SemanticLayerService
+S2SemanticLayerService -> S2SemanticLayerService : DataSource::getName
+activate S2SemanticLayerService
+S2SemanticLayerService -> S2SemanticLayerService : SemanticSchemaManager::getDatasource
+activate S2SemanticLayerService
+S2SemanticLayerService --> S2SemanticLayerService
+deactivate S2SemanticLayerService
+S2SemanticLayerService -> SchemaServiceImpl : fetchSemanticSchema
+activate SchemaServiceImpl
+SchemaServiceImpl -> SchemaServiceImpl : buildSemanticSchema
+activate SchemaServiceImpl
+SchemaServiceImpl --> SchemaServiceImpl
+deactivate SchemaServiceImpl
+SchemaServiceImpl --> S2SemanticLayerService
+deactivate SchemaServiceImpl
+S2SemanticLayerService -> QueryReqConverter : convert
+activate QueryReqConverter
+QueryReqConverter --> S2SemanticLayerService
+deactivate QueryReqConverter
+S2SemanticLayerService -> QueryUtils : enableOptimize
+activate QueryUtils
+QueryUtils --> S2SemanticLayerService
+deactivate QueryUtils
+S2SemanticLayerService -> SemanticSchemaManager : getSemanticModel
+activate SemanticSchemaManager
+SemanticSchemaManager -> SchemaServiceImpl : getSchemaYamlTpl
+activate SchemaServiceImpl
+SchemaServiceImpl --> SemanticSchemaManager
+deactivate SchemaServiceImpl
+SemanticSchemaManager -> DatabaseConverter : convert
+activate DatabaseConverter
+DatabaseConverter --> SemanticSchemaManager
+deactivate DatabaseConverter
+SemanticSchemaManager -> SemanticSchemaManager : getJoinRelation
+activate SemanticSchemaManager
+SemanticSchemaManager -> SemanticSchemaManager : getDatasource
+activate SemanticSchemaManager
+SemanticSchemaManager --> SemanticSchemaManager
+deactivate SemanticSchemaManager
+SemanticSchemaManager -> SemanticSchemaManager : item ->
+activate SemanticSchemaManager
+SemanticSchemaManager --> SemanticSchemaManager
+deactivate SemanticSchemaManager
+SemanticSchemaManager -> SemanticSchemaManager : (k1,k2) ->
+activate SemanticSchemaManager
+SemanticSchemaManager --> SemanticSchemaManager
+deactivate SemanticSchemaManager
+SemanticSchemaManager --> SemanticSchemaManager
+deactivate SemanticSchemaManager
+SemanticSchemaManager -> SemanticSchemaManager : getDimensions
+activate SemanticSchemaManager
+SemanticSchemaManager --> SemanticSchemaManager
+deactivate SemanticSchemaManager
+SemanticSchemaManager -> SemanticSchemaManager : getMetrics
+activate SemanticSchemaManager
+SemanticSchemaManager --> SemanticSchemaManager
+deactivate SemanticSchemaManager
+SemanticSchemaManager --> S2SemanticLayerService
+deactivate SemanticSchemaManager
+S2SemanticLayerService --> S2SemanticLayerService
+deactivate S2SemanticLayerService
+S2SemanticLayerService -> S2SemanticLayerService : DataSource::getName
+activate S2SemanticLayerService
+S2SemanticLayerService -> S2SemanticLayerService : SemanticSchemaManager::getDatasource
+activate S2SemanticLayerService
+S2SemanticLayerService -> S2SemanticLayerService : buildSqlQueryStatement
+activate S2SemanticLayerService
+S2SemanticLayerService --> S2SemanticLayerService
+deactivate S2SemanticLayerService
+S2SemanticLayerService -> S2SemanticLayerService : buildStructQueryStatement
+activate S2SemanticLayerService
+S2SemanticLayerService --> S2SemanticLayerService
+deactivate S2SemanticLayerService
+S2SemanticLayerService -> S2SemanticLayerService : buildMultiStructQueryStatement
+activate S2SemanticLayerService
+S2SemanticLayerService --> S2SemanticLayerService
+deactivate S2SemanticLayerService
+S2SemanticLayerService --> S2SemanticLayerService
+deactivate S2SemanticLayerService
+S2SemanticLayerService -> QueryUtils : enableOptimize
+activate QueryUtils
+QueryUtils --> S2SemanticLayerService
+deactivate QueryUtils
+S2SemanticLayerService -> DefaultSemanticTranslator : translate
+activate DefaultSemanticTranslator
+DefaultSemanticTranslator -> DefaultSemanticTranslator : parse
+activate DefaultSemanticTranslator
+DefaultSemanticTranslator --> DefaultSemanticTranslator
+deactivate DefaultSemanticTranslator
+DefaultSemanticTranslator -> DefaultSemanticTranslator : optimize
+activate DefaultSemanticTranslator
+DefaultSemanticTranslator --> DefaultSemanticTranslator
+deactivate DefaultSemanticTranslator
+DefaultSemanticTranslator --> S2SemanticLayerService
+deactivate DefaultSemanticTranslator
+S2SemanticLayerService -> QueryUtils : sqlParserUnion
+activate QueryUtils
+QueryUtils -> SqlGenerateUtils : getUnionSelect
+activate SqlGenerateUtils
+SqlGenerateUtils --> QueryUtils
+deactivate SqlGenerateUtils
+QueryUtils --> S2SemanticLayerService
+deactivate QueryUtils
+S2SemanticLayerService --> S2SemanticLayerService
+deactivate S2SemanticLayerService
+S2SemanticLayerService --> S2SemanticLayerService
+deactivate S2SemanticLayerService
+S2SemanticLayerService -> DefaultSemanticTranslator : translate
+activate DefaultSemanticTranslator
+DefaultSemanticTranslator -> DefaultSemanticTranslator : parse
+activate DefaultSemanticTranslator
+DefaultSemanticTranslator -> QueryConverter : accept
+activate QueryConverter
+QueryConverter --> DefaultSemanticTranslator
+deactivate QueryConverter
+DefaultSemanticTranslator -> QueryConverter : convert
+activate QueryConverter
+QueryConverter --> DefaultSemanticTranslator
+deactivate QueryConverter
+DefaultSemanticTranslator -> DefaultSemanticTranslator : doParse
+activate DefaultSemanticTranslator
+DefaultSemanticTranslator -> DefaultSemanticTranslator : parserSql
+activate DefaultSemanticTranslator
+DefaultSemanticTranslator -> DefaultSemanticTranslator : t ->
+activate DefaultSemanticTranslator
+DefaultSemanticTranslator --> DefaultSemanticTranslator
+deactivate DefaultSemanticTranslator
+DefaultSemanticTranslator --> DefaultSemanticTranslator
+deactivate DefaultSemanticTranslator
+DefaultSemanticTranslator --> DefaultSemanticTranslator
+deactivate DefaultSemanticTranslator
+DefaultSemanticTranslator -> DefaultSemanticTranslator : doParse
+activate DefaultSemanticTranslator
+DefaultSemanticTranslator -> AggOption : getAggregation
+activate AggOption
+AggOption --> DefaultSemanticTranslator
+deactivate AggOption
+DefaultSemanticTranslator -> DefaultSemanticTranslator : doParse
+activate DefaultSemanticTranslator
+DefaultSemanticTranslator --> DefaultSemanticTranslator
+deactivate DefaultSemanticTranslator
+DefaultSemanticTranslator --> DefaultSemanticTranslator
+deactivate DefaultSemanticTranslator
+DefaultSemanticTranslator -> SqlSelectHelper : hasLimit
+activate SqlSelectHelper
+SqlSelectHelper -> SqlSelectHelper : getSelect
+activate SqlSelectHelper
+SqlSelectHelper --> SqlSelectHelper
+deactivate SqlSelectHelper
+SqlSelectHelper --> DefaultSemanticTranslator
+deactivate SqlSelectHelper
+DefaultSemanticTranslator --> DefaultSemanticTranslator
+deactivate DefaultSemanticTranslator
+DefaultSemanticTranslator -> DefaultSemanticTranslator : optimize
+activate DefaultSemanticTranslator
+DefaultSemanticTranslator -> QueryOptimizer : rewrite
+activate QueryOptimizer
+QueryOptimizer --> DefaultSemanticTranslator
+deactivate QueryOptimizer
+DefaultSemanticTranslator --> DefaultSemanticTranslator
+deactivate DefaultSemanticTranslator
+DefaultSemanticTranslator --> S2SemanticLayerService
+deactivate DefaultSemanticTranslator
+S2SemanticLayerService -> SemanticTranslateResp : builder
+activate SemanticTranslateResp
+SemanticTranslateResp --> S2SemanticLayerService
+deactivate SemanticTranslateResp
+S2SemanticLayerService -> SemanticTranslateRespBuilder : querySQL
+activate SemanticTranslateRespBuilder
+SemanticTranslateRespBuilder --> S2SemanticLayerService
+deactivate SemanticTranslateRespBuilder
+S2SemanticLayerService -> SemanticTranslateRespBuilder : isOk
+activate SemanticTranslateRespBuilder
+SemanticTranslateRespBuilder --> S2SemanticLayerService
+deactivate SemanticTranslateRespBuilder
+S2SemanticLayerService -> SemanticTranslateRespBuilder : errMsg
+activate SemanticTranslateRespBuilder
+SemanticTranslateRespBuilder --> S2SemanticLayerService
+deactivate SemanticTranslateRespBuilder
+S2SemanticLayerService -> SemanticTranslateRespBuilder : build
+activate SemanticTranslateRespBuilder
+SemanticTranslateRespBuilder --> S2SemanticLayerService
+deactivate SemanticTranslateRespBuilder
+S2SemanticLayerService --> ChatWorkflowEngine
+deactivate S2SemanticLayerService
+ChatWorkflowEngine --> ChatWorkflowEngine
+deactivate ChatWorkflowEngine
+return
+@enduml
