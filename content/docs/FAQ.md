@@ -48,13 +48,19 @@ A: [连接数据库](https://supersonicbi.github.io/docs/headless-bi/%E8%BF%9E%E
 A: 可以，启动系统后查看swagger接口文档：http://localhost:9080/swagger-ui/index.html
 
 ## 有哪些国内的大模型服务对接？
-A: 当前我们验证过一些主流大模型服务，其申请链接如下表所示：
+A: 以下是我们验证过的商用大模型服务，都通过OPEN_AI协议对接，如下表所示：
 | 提供商   | API服务URL                                       | 推荐模型       |
 |----------|---------------------------------------------------|----------------|
 | 智谱AI   | https://open.bigmodel.cn/api/paas/v4              | glm-4          |
 | 阿里云   | https://dashscope.aliyuncs.com/compatible-mode/v1 | qwen-max       |
 | 幻方     | https://api.deepseek.com                          | deepseek-chat  |
 | 月之暗面 | https://api.moonshot.cn/v1                        | moonshot-v1-8k |
+
+以下是我们验证过的开源本地大模型，都通过OLLAMA协议对接，如下表所示：
+| 开源方   | OLLAMA模型镜像           |
+|----------|-----------------------|
+| 阿里云   |  qwen2:7b, qwen2.5:7b  |
+| Meta    |  llama3.1:8b           |
 
 ## 【语义模型】和【数据集】有什么区别？
 A: 简单来说【数据集】比【语义模型】高一个层次，是直接面向应用的字段集合。从建模过程来说，先构建语义模型，在模型下创建指标和维度，最后从多个语义模型下选择指标和维度来创建数据集。那【数据集】存在的意义是什么？一方面，类比下数据库中的视图，可对底层数据表进行封装，从而对应用层屏蔽多表关联，在Text2SQL中能降低LLM的生成难度。另一方面，通过数据集可以对不同应用暴露不同的字段组合，从而实现灵活的访问控制。
