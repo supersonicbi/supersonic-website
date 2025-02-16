@@ -1,9 +1,9 @@
 +++
-title = "chat-sdk集成"
+title = "前端SDK集成"
 weight = 6
 +++
 
-# chat-sdk 集成
+# 前端SDK集成
 
 `问答对话`页支持以下两种方式集成：
 

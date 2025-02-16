@@ -1,9 +1,13 @@
 +++
 title = "FAQ"
-weight = 6
+weight = 10
 +++
 
 # FAQ
+
+## 有没有商业版本？
+
+A：商业版V1.0目前内测中，相比开源版更易用、更智能、更可控，欢迎有兴趣的伙伴联系我们。
 
 ## 项目有没有体验的地址？
 
@@ -19,7 +23,7 @@ A: 项目内置langchain4j社区提供的demo API key，但单次请求openai大
 
 ## 支持哪些大模型服务？
 
-A: 当前主要支持兼容open_ai接口协议的大模型服务，比如GPT、GLM、DeepSeek、Qwen、Moonshot等。文心和混元正在验证中，敬请期待。
+A: 当前主要支持兼容open_ai接口协议的大模型服务，比如GPT、GLM、DeepSeek、Qwen、Moonshot等。
 
 ## 是否支持文本知识库？
 
