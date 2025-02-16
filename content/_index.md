@@ -3,7 +3,13 @@ title = "项目介绍"
 weight = 1
 +++
 
+
+
 # 项目介绍
+
+{{< hint info >}}
+** SuperSonic最新版本为0.9.10，本文档介绍基于该版本的功能。
+{{< /hint >}}
 
 SuperSonic是融合Headless BI和Chat BI的新一代数据分析平台，致力于通过自然语言对话来分析数据，与传统交互的分析产品组合，推动数据民主化。SuperSonic提供两套开箱即用的产品界面：
 - Headless BI界面，用于构建语义数据模型，并设置数据访问权限。
