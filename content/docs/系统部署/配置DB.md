@@ -8,26 +8,23 @@ weight = 2
 {{< hint danger >}}
 **注意**
 
-系统默认使用H2内存数据库, 重启后会丢失数据, 若需要替换为自己的MySQL, 请按以下进行配置.
+系统默认使用H2内存数据库, 重启后会丢失数据, 若需要替换为自己的持久化数据库, 请按以下进行配置.
 {{< /hint >}}
 
+## 1. 初次部署
 
-
-## 1. 执行SQL脚本
-
-**初次配置DB**请依次执行conf/db下schema-mysql.sql、 data-mysql.sql, 这两个脚本均为最新表结构
-
-**若是已配置过DB并部署好的服务**, 可参考sql-update.sql, 这里会注明每次功能改动需要改动的表结构
-
-## 2. 配置YAML文件
-
-conf下application-local.yaml中默认的DB配置为H2配置, 替换为自己的MySQL即可
+在bin/supersonic-env.sh脚本中配置数据库相关参数，当前系统默认支持 h2, mysql, postgres：
 
 ```
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/your_database?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowMultiQueries=true
-    username: your_username
-    password: your_password
-    driver-class-name: com.mysql.jdbc.Driver
+# Supported DB_TYPE:  h2, mysql, postgres
+export S2_DB_TYPE=mysql
+export S2_DB_HOST=localhost
+export S2_DB_PORT=3306
+export S2_DB_USER=mysql
+export S2_DB_PASSWORD=mysql
+export S2_DB_DATABASE=mysql
 ```
+
+## 2. 升级部署
+
+升级部署时，需要将schema升级到最新版本，请手动执行脚本：conf/db/sql-update.sql
