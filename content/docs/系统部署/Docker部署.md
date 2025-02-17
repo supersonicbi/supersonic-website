@@ -3,38 +3,41 @@ title = "Docker部署"
 weight = 2
 +++
 
-# 部署前提
-下载安装Docker和Docker Compose，并启动docker  
+# Docker部署
+
+{{< hint info >}}
+SuperSonic最新版本为0.9.10，本文档介绍基于该版本的功能。
+{{< /hint >}}
+
+## 部署前提
+安装Docker和Docker Compose，并启动Docker：
 Docker版本：26.0.0+  
 Docker Compose：v2.26.1+
 
-{{< hint info >}}
-**注意**
+{{< hint danger >}}
+如果报如下错，说明docker没有启动：
 
-1 如果报如下错:  
 Cannot connect to the Docker daemon at unix:///Users/lexluo/.docker/run/docker.sock. Is the docker daemon running?   
-说明docker没有启动
-
-2 supersonic_db_init主要作用是数据库数据初始化，不是常驻服务。执行完成后，exited是正常现象。
-
 {{< /hint >}}
 
 
-# 启动部署
-## 进入docker目录，执行脚步启动
-`
-    docker-compose up -d
-`
-{{< hint info >}}
-**注意**
-支持按SuperSonic版本启动，不指定版本默认是：latest  
-`
-SUPERSONIC_VERSION=0.9.2-SNAPSHOT docker-compose up -d
-`
-{{< /hint >}}
+## 启动部署
 
-{{< figure src=/img/docker_ps.png#center >}}
+### 下载docker-compose.xml文件
+```
+wget https://github.com/tencentmusic/supersonic/blob/master/docker/docker-compose.yml
+```
 
+### 启动docker-compose
+```
+docker-compose -f docker-compose.xml up -d
+```
+
+正常会启动运行两个容器：
+
+- **supersonic_postgres**: 存储SuperSonic元数据，以及采用pgvector插件存储Embedding向量
+
+- **supersonic_standalone**: 启动SuperSonic前后端服务
 
 {{< hint info >}}
 **注意**
@@ -55,23 +58,15 @@ sudo systemctl restart docker
 
 ## 运维操作
 1 查看进程运行状况：  
-`
+```
 docker-compose ps
-`
-正常会出现三个服务：
-{{< figure src=/img/docker_service.png#center >}}
+```
 
 2 查看进程日志信息：  
-`
+```
 docker exec -it supersonic_standalone bash
-`
+```
 
-进入logs目录查看日志
-`
-cd logs
-`
-
-
-## 验证
+## 登陆验证
 待各服务成功启动后，访问链接：http://localhost:9080  
 如果无法打开链接，请尝试升级Docker Compose到26.0.0+ 、Docker版本到26.0.0+ 
