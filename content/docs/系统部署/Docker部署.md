@@ -1,6 +1,6 @@
 +++
 title = "Docker部署"
-weight = 1
+weight = 2
 +++
 
 # 部署前提
