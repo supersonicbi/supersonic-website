@@ -2,6 +2,10 @@ baseURL = 'https://example.org/'
 languageCode = 'en-us'
 title = 'SuperSonic(0.9.10)'
 
+[module]
+  [[module.imports]]
+    path = 'github.com/hugomods/baidu-analytics'
+
 [params]
   BookTheme = 'auto'
   [params.services]
