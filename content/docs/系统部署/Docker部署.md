@@ -25,7 +25,7 @@ Cannot connect to the Docker daemon at unix:///Users/lexluo/.docker/run/docker.s
 
 ### 下载docker-compose.xml文件
 ```
-wget https://github.com/tencentmusic/supersonic/blob/master/docker/docker-compose.yml
+wget https://github.com/supersonicbi/supersonic-website/releases/download/0.9.10/docker-compose.yml
 ```
 
 ### 启动docker-compose
