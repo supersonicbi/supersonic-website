@@ -30,7 +30,7 @@ wget https://github.com/tencentmusic/supersonic/blob/master/docker/docker-compos
 
 ### 启动docker-compose
 ```
-docker-compose -f docker-compose.xml up -d
+docker-compose -f docker-compose.yml up -d
 ```
 
 正常会启动运行两个容器：
