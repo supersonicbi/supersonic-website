@@ -54,7 +54,7 @@ export default ChatPage;
 
 ```
 <iframe
-  src="http://localhost:9080/chat/external"
+  src="http://localhost:9080/webapp/chat/external"
   style={{ border: "none" }}
 />
 ```
