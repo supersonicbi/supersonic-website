@@ -1,9 +1,6 @@
 baseURL = 'https://example.org/'
 languageCode = 'en-us'
-title = 'SuperSonic(0.9.10)'
+title = 'SuperSonic(v0.9.10)'
 
 [params]
   BookTheme = 'auto'
-  [params.services]
-    [params.services.baidu_analytics]
-      id = '21702154'
