@@ -7,6 +7,8 @@ weight = 20
 
 # Blog
 
+2025-03-11 [5分钟让SuperSonic自定义数据库启动](https://mp.weixin.qq.com/s/g2fZYzgQjFGxQ009GsHLnQ)
+
 2025-03-02 [SuperSonic 0.9.10版本发布](https://mp.weixin.qq.com/s/8iIUe5kuHwovToTeSMxulA)
 
 2025-02-18 [5分钟极简部署SuperSonic](https://mp.weixin.qq.com/s/26pDmR9EccWdTpuk8XuXIg)
